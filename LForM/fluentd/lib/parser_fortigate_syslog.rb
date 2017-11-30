@@ -24,7 +24,7 @@ module Fluent
       syslog_value = text.split(/((([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\s)/, 2)
       if syslog_value[1].nil? then raise "ERR001:syslog format error(no syslog value)" end
 
-      logemit(syslog_value[5])
+      logemit(syslog_value.last)
 
     end
 
