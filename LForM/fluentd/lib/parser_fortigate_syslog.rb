@@ -17,32 +17,24 @@ module Fluent
 
     def parse(text)
       # parse syslog
-      md = text.match(/^\w{3}\s(([0-2][0-9])|3[0-1])\s([0-9]{2}:[0-9]{2}:[0-9]{2})\s((([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))(\s\w+=.+)+$/)
-      if md.nil? then raise "ERR002:syslog format error(wrong syslog format)" end
-
+      syslog_value = text.scan(/\w+=[\w+!#$%&'()-=^~|@`\[{;+:*\]},<\.>\/?\\_]+|\w+=\"[\w+\s+!#$%&'()-=^~|@`\[{;+:*\]},<\.>\/?\\_]*\"?+/)
+      if syslog_value.length == 0 then raise "ERR001:syslog format error(wrong syslog format)" end
       # split by regex of ipaddress
-      syslog_value = text.split(/((([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\s)/, 2)
-      if syslog_value[1].nil? then raise "ERR001:syslog format error(no syslog value)" end
-
-      logemit(syslog_value.last)
-
+      # syslog_value = text.split(/((([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\s)/, 2)
+      # if syslog_value[1].nil? then raise "ERR001:syslog format error(no syslog value)" end
+      logemit(syslog_value)
     end
 
-
     def logemit(syslog_value)
-
+      # emit to elasticsearch
       record_value = {}
-      records = syslog_value.split(/\s/)
-
       date = ""
       datetime = ""
-
-      records.each{|value|
+      syslog_value.each{|value|
 
         record = value.split("=")
         k = record[0]
         v = record[1]
-
         # date and time combining
         case k
           when "date" then
@@ -52,8 +44,7 @@ module Fluent
             datetime = date.concat(" " + v)
             next
         end
-        record_value["#{k}"] = v == nil || v == "" ? nil : v.tr("\"", "")
-
+        record_value["#{k}"] = (v == nil || v == "") ? nil : v.tr("\"","")
       }
 
       if datetime != "" then
@@ -71,7 +62,6 @@ module Fluent
       #Log emit
       time = Engine.now
       Engine.emit(tag, time, record_value)
-
     end
 
     def time_transformation(syslog_time)
@@ -79,8 +69,6 @@ module Fluent
       Time.parse(syslog_time).to_i
     end
 
-
   end
  end
 end
-
