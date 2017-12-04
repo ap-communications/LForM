@@ -53,7 +53,7 @@ module Fluent
       elsif record_value["type"] == "utm" then
         tag = "syslog_security.forti"
       else
-        raise "ERR003:syslog format error(type definition error)"
+        raise "ERR002:syslog format error(type definition error)"
       end
 
       #Log emit
