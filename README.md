@@ -28,16 +28,18 @@ LForM collects the log of the next-generation firewall, to visualize the traffic
 
 Installation procedure for LForM is as below.(this requires root privileges)
 
-	# git clone
+	### Git clone
 	yum install -y git
 	git clone -b v1.1.3 https://github.com/ap-communications/LForM
 
-	# Move to LForM directory before following steps.
+	### Move to LForM directory before following steps.
 	cd LForM/
 
-	# Run Shellscript.(Cent7.x Only)
-	./LForM_install.sh
+	### Run Shellscript.(Cent7.x Only)
+	./LForM_install.sh 2>&1 | tee -a ./LForM_install.log
 
-	# Installation is started.
+	### Installation is started.
 
-
+	### Server restart
+	sync
+	reboot
