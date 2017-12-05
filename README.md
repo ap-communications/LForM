@@ -26,7 +26,7 @@ LForM collects the log of the next-generation firewall, to visualize the traffic
 
 ## Installation
 
-Installation procedure for PALallax is as below.(this requires root privileges)
+Installation procedure for LForM is as below.(this requires root privileges)
 
 	# git clone
 	yum install -y git

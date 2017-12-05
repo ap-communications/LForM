@@ -13,7 +13,7 @@ curl -XPUT localhost:9200/_template/template_01 -d '
       "receive_time": {"type":"date","format":"strict_date_optional_time||epoch_second"},
       "appact" : {"type":"string","index":"not_analyzed"},
       "action" : {"type":"string","index":"not_analyzed"},
-      "attack" : {"type":"integer","index":"not_analyzed"},
+      "attack" : {"type":"string","index":"not_analyzed"},
       "attackid" : {"type":"integer","index":"not_analyzed"},
       "count" : {"type":"integer","index":"not_analyzed"},
       "craction" : {"type":"string","index":"not_analyzed"},
