@@ -8,15 +8,15 @@ echo `date`
 
 # Version definition
 
-elasticsearch_version="elasticsearch-2.3.3"
+elasticsearch_version="elasticsearch-2.4.6"
 java_version="java-1.8.0"
 curator_version="3.5.1"
 fluentd_version="td-agent-2.3.1"
-gem_elastic_version="1.5.0"
+gem_elastic_version="1.11.0"
 gem_polling_version="0.1.5"
 gem_snmp_version="1.2.0"
-gem_fluent_snmp_version="0.0.8"
-kibana_version="kibana-4.5.1"
+gem_fluent_snmp_version="0.0.9"
+kibana_version="kibana-4.6.6"
 nginx_version="nginx-1.10.1"
 
 
@@ -32,7 +32,17 @@ mkdir -p /var/log/kibana
 
 source /root/.bash_profile
 cp LForM/system/LForM_fo_log /etc/logrotate.d/
+cp LForM/system/LForM_cron_log /etc/logrotate.d/
 cp LForM/system/kibana_log /etc/logrotate.d/
+cp LForM/system/td-agent_log /etc/logrotate.d/
+cp LForM/system/nginx_log /etc/logrotate.d/
+
+cp LForM/system/db_open.sh /opt/LForM/
+cp -R LForM/system/cron_file /opt/LForM/
+chmod 711 /opt/LForM/db_open.sh
+chmod -R 711 /opt/LForM/cron_file
+
+
 cp -p /etc/rsyslog.conf /etc/rsyslog.conf.`date '+%Y%m%d'`
 \cp -f LForM/system/rsyslog.conf /etc/rsyslog.conf
 systemctl restart rsyslog
@@ -58,9 +68,9 @@ yum -y install $java_version
 echo "====kibana===="
 
 cat <<EOF> /etc/yum.repos.d/kibana.repo
-[kibana-4.5]
+[kibana-4.6]
 name=Kibana repository for 4.5.x packages
-baseurl=http://packages.elastic.co/kibana/4.5/centos
+baseurl=http://packages.elastic.co/kibana/4.6/centos
 gpgcheck=1
 gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
 enabled=1
@@ -133,6 +143,7 @@ echo `LForM/elasticsearch/heapmemory_set.sh`
 wait
 
 \cp -pf LForM/elasticsearch/config/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
+\cp -ar LForM/elasticsearch/config/logging.yml /etc/elasticsearch/logging.yml
 chown elasticsearch:elasticsearch /etc/elasticsearch/elasticsearch.yml
 
 ### Fluentd
@@ -145,8 +156,10 @@ sed -i -e "s/TD_AGENT_GROUP=td-agent/TD_AGENT_GROUP=root/g" /etc/init.d/td-agent
 
 ### nginx
 cp -p /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.`date '+%Y%m%d'`
+cp -p /etc/nginx/nginx.conf /etc/nginx/nginx.conf.`date '+%Y%m%d'`
 cp -p LForM/nginx/config/.htpasswd /etc/nginx/conf.d/.htpasswd
 \cp -pf LForM/nginx/config/default.conf /etc/nginx/conf.d/default.conf
+\cp -pf LForM/nginx/config/nginx.conf /etc/nginx/nginx.conf
 
 
 ## SELinux Setting
@@ -190,7 +203,7 @@ sed -i -e "/^# End of file$/i * soft nofile 65536\n* hard nofile 65536" /etc/sec
 
 # Disable yum update
 
-echo exclude=td-agent* kibana* elasticsearch* nginx* >> /etc/yum.conf
+echo exclude=td-agent* kibana* elasticsearch* nginx* java* >> /etc/yum.conf
 
 # LForM database copy
 echo "====LForM database copy===="
@@ -213,8 +226,14 @@ curl -XPUT 'http://localhost:9200/_snapshot/LForM_snapshot' -d '{
  
 curl -XPOST localhost:9200/_snapshot/LForM_snapshot/snapshot_kibana/_restore
 
+curl -XPOST localhost:9200/_snapshot/LForM_snapshot/snapshot_kibana/_restore
+
 echo `LForM/LForM_format.sh`
 wait
+
+## Logrotate Settings
+
+
 
 
 # Auto start
