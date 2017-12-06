@@ -19,7 +19,6 @@ gem_fluent_snmp_version="0.0.9"
 kibana_version="kibana-4.6.6"
 nginx_version="nginx-1.10.1"
 
-
 # Preparation
 
 echo "====Preparation===="
@@ -29,6 +28,7 @@ mkdir -p /opt/LForM/fluentd/lib
 mkdir -p /opt/LForM/elasticsearch
 mkdir /var/lib/fluentd_buffer
 mkdir -p /var/log/kibana
+mkdir  /var/log/LForM_cron
 
 source /root/.bash_profile
 cp LForM/system/LForM_fo_log /etc/logrotate.d/
@@ -69,7 +69,7 @@ echo "====kibana===="
 
 cat <<EOF> /etc/yum.repos.d/kibana.repo
 [kibana-4.6]
-name=Kibana repository for 4.5.x packages
+name=Kibana repository for 4.6.x packages
 baseurl=http://packages.elastic.co/kibana/4.6/centos
 gpgcheck=1
 gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
@@ -134,7 +134,7 @@ cp -pf /opt/kibana/src/ui/views/ui_app.jade /opt/kibana/src/ui/views/ui_app.jade
 cp -pf /opt/kibana/src/ui/views/chrome.jade /opt/kibana/src/ui/views/chrome.jade.`date '+%Y%m%d'`
 \cp -pf LForM/kibana/chrome.jade /opt/kibana/src/ui/views/
 cp -pf /opt/kibana/optimize/bundles/kibana.bundle.js /opt/kibana/optimize/bundles/kibana.bundle.js.`date '+%Y%m%d'`
-\cp -pf LForM/kibana/kibana.bundle.js /opt/kibana/optimize/bundles/ 
+\cp -pf LForM/kibana/kibana.bundle.js /opt/kibana/optimize/bundles/
 cp -pf LForM/kibana/LForM.png /opt/kibana/optimize/bundles/src/ui/public/images/
 \cp -pf LForM/kibana/elk.ico /opt/kibana/optimize/bundles/src/ui/public/images/
 
@@ -145,6 +145,9 @@ wait
 \cp -pf LForM/elasticsearch/config/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 \cp -ar LForM/elasticsearch/config/logging.yml /etc/elasticsearch/logging.yml
 chown elasticsearch:elasticsearch /etc/elasticsearch/elasticsearch.yml
+chown elasticsearch:elasticsearch /etc/elasticsearch/logging.yml
+chown elasticsearch:elasticsearch /var/log/elasticsearch/
+chown elasticsearch:elasticsearch /var/lib/elasticsearch/
 
 ### Fluentd
 \cp -pf LForM/fluentd/config/td-agent.conf /etc/td-agent/td-agent.conf
@@ -223,8 +226,6 @@ curl -XPUT 'http://localhost:9200/_snapshot/LForM_snapshot' -d '{
         "compress": true
     }
 }'
- 
-curl -XPOST localhost:9200/_snapshot/LForM_snapshot/snapshot_kibana/_restore
 
 curl -XPOST localhost:9200/_snapshot/LForM_snapshot/snapshot_kibana/_restore
 
