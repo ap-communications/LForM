@@ -44,8 +44,10 @@ module Fluent
         record_value["#{k}"] = (v == nil || v == "") ? nil : v.tr("\"","")
       }
 
-      if datetime != "" then
+      if date_formatcheck(datetime) != false then
         record_value["receive_time"] = time_transformation(datetime)
+      else
+        raise "ERR002:syslog format error(receive_time is not defined)"
       end
 
       if record_value["type"] == "traffic" then
@@ -53,12 +55,17 @@ module Fluent
       elsif record_value["type"] == "utm" then
         tag = "syslog_security.forti"
       else
-        raise "ERR002:syslog format error(type definition error)"
+        raise "ERR003:syslog format error(type definition error)"
       end
 
       #Log emit
       time = Engine.now
       Engine.emit(tag, time, record_value)
+    end
+
+    def date_formatcheck(datetimestr)
+      require 'date'
+      ! Date.parse(datetimestr).nil? rescue false
     end
 
     def time_transformation(syslog_time)

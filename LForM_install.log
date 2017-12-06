@@ -1,0 +1,185 @@
+**********************
+Install started.
+**********************
+2017年 12月 6日 水曜日 13:43:46 JST
+====Preparation====
+mkdir: ディレクトリ `/var/log/LForM' を作成できません: ファイルが存在します
+mkdir: ディレクトリ `/var/lib/fluentd_buffer' を作成できません: ファイルが存在します
+mkdir: ディレクトリ `/var/log/LForM_cron' を作成できません: ファイルが存在します
+====Elasticsearch====
+読み込んだプラグイン:fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: ftp.tsukuba.wide.ad.jp
+ * extras: ftp.tsukuba.wide.ad.jp
+ * updates: ftp.tsukuba.wide.ad.jp
+パッケージ elasticsearch-2.4.6-1.noarch はインストール済みか最新バージョンです
+何もしません
+読み込んだプラグイン:fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: ftp.tsukuba.wide.ad.jp
+ * extras: ftp.tsukuba.wide.ad.jp
+ * updates: ftp.tsukuba.wide.ad.jp
+パッケージ 1:java-1.8.0-openjdk-1.8.0.151-1.b12.el7_4.x86_64 はインストール済みか最新バージョンです
+何もしません
+====kibana====
+読み込んだプラグイン:fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: ftp.tsukuba.wide.ad.jp
+ * extras: ftp.tsukuba.wide.ad.jp
+ * updates: ftp.tsukuba.wide.ad.jp
+パッケージ kibana-4.6.6-1.x86_64 はインストール済みか最新バージョンです
+何もしません
+chown: ユーザ指定が不正: `kibana:kibana'
+====Fluentd====
+読み込んだプラグイン:fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: ftp.tsukuba.wide.ad.jp
+ * extras: ftp.tsukuba.wide.ad.jp
+ * updates: ftp.tsukuba.wide.ad.jp
+パッケージ td-agent-2.3.1-0.el7.x86_64 はインストール済みか最新バージョンです
+何もしません
+読み込んだプラグイン:fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: ftp.tsukuba.wide.ad.jp
+ * extras: ftp.tsukuba.wide.ad.jp
+ * updates: ftp.tsukuba.wide.ad.jp
+パッケージ initscripts-9.49.39-1.el7.x86_64 はインストール済みか最新バージョンです
+何もしません
+====Fluentd Plugin====
+Successfully installed fluent-plugin-elasticsearch-1.11.0
+Parsing documentation for fluent-plugin-elasticsearch-1.11.0
+Done installing documentation for fluent-plugin-elasticsearch after 0 seconds
+1 gem installed
+Successfully installed polling-0.1.5
+Parsing documentation for polling-0.1.5
+Done installing documentation for polling after 0 seconds
+1 gem installed
+Successfully installed snmp-1.2.0
+Parsing documentation for snmp-1.2.0
+Done installing documentation for snmp after 0 seconds
+1 gem installed
+Successfully installed fluent-plugin-snmp-0.0.9
+Parsing documentation for fluent-plugin-snmp-0.0.9
+Done installing documentation for fluent-plugin-snmp after 0 seconds
+1 gem installed
+====curator====
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 79 1558k   79 1231k    0     0  1170k      0  0:00:01  0:00:01 --:--:-- 1169k100 1558k  100 1558k    0     0  1236k      0  0:00:01  0:00:01 --:--:-- 1235k
+Requirement already up-to-date: pip in /usr/lib/python2.7/site-packages
+Requirement already satisfied: elasticsearch-curator==3.5.1 in /usr/lib/python2.7/site-packages
+Requirement already satisfied: click>=3.3 in /usr/lib/python2.7/site-packages (from elasticsearch-curator==3.5.1)
+Requirement already satisfied: elasticsearch<3.0.0,>=2.3.0 in /usr/lib/python2.7/site-packages (from elasticsearch-curator==3.5.1)
+Requirement already satisfied: urllib3<2.0,>=1.8 in /usr/lib/python2.7/site-packages (from elasticsearch<3.0.0,>=2.3.0->elasticsearch-curator==3.5.1)
+====nginx====
+読み込んだプラグイン:fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: ftp.tsukuba.wide.ad.jp
+ * extras: ftp.tsukuba.wide.ad.jp
+ * updates: ftp.tsukuba.wide.ad.jp
+パッケージ 1:nginx-1.10.1-1.el7.ngx.x86_64 はインストール済みか最新バージョンです
+何もしません
+読み込んだプラグイン:fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: ftp.tsukuba.wide.ad.jp
+ * extras: ftp.tsukuba.wide.ad.jp
+ * updates: ftp.tsukuba.wide.ad.jp
+パッケージ httpd-tools-2.4.6-67.el7.centos.6.x86_64 はインストール済みか最新バージョンです
+何もしません
+====Setting file copy====
+
+[91mWarning: ALREADY_ENABLED: syslog_tcp[00m
+[91mWarning: ALREADY_ENABLED: syslog_udp[00m
+[91mWarning: ALREADY_ENABLED: http[00m
+====LForM database copy====
+● elasticsearch.service - Elasticsearch
+   Loaded: loaded (/usr/lib/systemd/system/elasticsearch.service; enabled; vendor preset: disabled)
+   Active: active (running) since 水 2017-12-06 13:40:40 JST; 5min ago
+     Docs: http://www.elastic.co
+ Main PID: 1028 (java)
+   CGroup: /system.slice/elasticsearch.service
+           └─1028 /bin/java -Xms1800m -Xmx1800m -Djava.awt.headless=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError -XX:+DisableExplicitGC -Dfile.encoding=UTF-8 -Djna.nosys=true -Des.path.home=/usr/share/elasticsearch -cp /usr/share/elasticsearch/lib/elasticsearch-2.4.6.jar:/usr/share/elasticsearch/lib/* org.elasticsearch.bootstrap.Elasticsearch start -Des.pidfile=/var/run/elasticsearch/elasticsearch.pid -Des.default.path.home=/usr/share/elasticsearch -Des.default.path.logs=/var/log/elasticsearch -Des.default.path.data=/var/lib/elasticsearch -Des.default.path.conf=/etc/elasticsearch
+
+12月 06 13:40:37 localhost.localdomain elasticsearch[1028]: [2017-12-06 13:40:37,528][INFO ][env                      ] [LForM_node1] heap size [1.7gb], compressed ordinary object pointers [true]
+12月 06 13:40:39 localhost.localdomain elasticsearch[1028]: [2017-12-06 13:40:39,904][INFO ][node                     ] [LForM_node1] initialized
+12月 06 13:40:39 localhost.localdomain elasticsearch[1028]: [2017-12-06 13:40:39,904][INFO ][node                     ] [LForM_node1] starting ...
+12月 06 13:40:39 localhost.localdomain elasticsearch[1028]: [2017-12-06 13:40:39,997][INFO ][transport                ] [LForM_node1] publish_address {127.0.0.1:9300}, bound_addresses {[::1]:9300}, {127.0.0.1:9300}
+12月 06 13:40:40 localhost.localdomain elasticsearch[1028]: [2017-12-06 13:40:40,004][INFO ][discovery                ] [LForM_node1] LForM/DGOT_7GdRGWEyqxbWcjMQA
+12月 06 13:40:43 localhost.localdomain elasticsearch[1028]: [2017-12-06 13:40:43,131][INFO ][cluster.service          ] [LForM_node1] new_master {LForM_node1}{DGOT_7GdRGWEyqxbWcjMQA}{127.0.0.1}{127.0.0.1:9300}, reason: zen-disco-join(elected_as_master, [0] joins received)
+12月 06 13:40:43 localhost.localdomain elasticsearch[1028]: [2017-12-06 13:40:43,300][INFO ][http                     ] [LForM_node1] publish_address {127.0.0.1:9200}, bound_addresses {[::1]:9200}, {127.0.0.1:9200}
+12月 06 13:40:43 localhost.localdomain elasticsearch[1028]: [2017-12-06 13:40:43,300][INFO ][node                     ] [LForM_node1] started
+12月 06 13:40:43 localhost.localdomain elasticsearch[1028]: [2017-12-06 13:40:43,439][INFO ][gateway                  ] [LForM_node1] recovered [3] indices into cluster_state
+12月 06 13:40:44 localhost.localdomain elasticsearch[1028]: [2017-12-06 13:40:44,670][INFO ][cluster.routing.allocation] [LForM_node1] Cluster health status changed from [RED] to [YELLOW] (reason: [shards started [[forti_syslog_log_001_traffic-20171206][0]] ...]).
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   137  100    21  100   116    447   2471 --:--:-- --:--:-- --:--:--  2521
+{"acknowledged":true}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   299  100   299    0     0  12023      0 --:--:-- --:--:-- --:--:-- 12458
+{"error":{"root_cause":[{"type":"snapshot_restore_exception","reason":"[LForM_snapshot:snapshot_kibana] cannot restore index [.kibana] because it's open"}],"type":"snapshot_restore_exception","reason":"[LForM_snapshot:snapshot_kibana] cannot restore index [.kibana] because it's open"},"status":500}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 27831  100    21  100 27810    372   481k --:--:-- --:--:-- --:--:--  484k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   137  100    21  100   116    361   1995 --:--:-- --:--:-- --:--:--  2000
+{"acknowledged":true}{"acknowledged":true}
+====Auto start====
+td-agent.service is not a native service, redirecting to /sbin/chkconfig.
+Executing /sbin/chkconfig td-agent on
+● td-agent.service - LSB: data collector for Treasure Data
+   Loaded: loaded (/etc/rc.d/init.d/td-agent; bad; vendor preset: disabled)
+   Active: active (running) since 水 2017-12-06 13:40:43 JST; 5min ago
+     Docs: man:systemd-sysv-generator(8)
+   CGroup: /system.slice/td-agent.service
+           ├─1313 /opt/td-agent/embedded/bin/ruby /usr/sbin/td-agent --log /var/log/td-agent/td-agent.log --use-v1-config --group root --daemon /var/run/td-agent/td-agent.pid
+           └─1316 /opt/td-agent/embedded/bin/ruby /usr/sbin/td-agent --log /var/log/td-agent/td-agent.log --use-v1-config --group root --daemon /var/run/td-agent/td-agent.pid
+
+12月 06 13:40:40 localhost.localdomain systemd[1]: Starting LSB: data collector for Treasure Data...
+12月 06 13:40:40 localhost.localdomain runuser[1124]: pam_unix(runuser:session): session opened for user root by (uid=0)
+12月 06 13:40:43 localhost.localdomain td-agent[1025]: Starting td-agent: [  OK  ]
+12月 06 13:40:43 localhost.localdomain systemd[1]: Started LSB: data collector for Treasure Data.
+● elasticsearch.service - Elasticsearch
+   Loaded: loaded (/usr/lib/systemd/system/elasticsearch.service; enabled; vendor preset: disabled)
+   Active: active (running) since 水 2017-12-06 13:40:40 JST; 5min ago
+     Docs: http://www.elastic.co
+ Main PID: 1028 (java)
+   CGroup: /system.slice/elasticsearch.service
+           └─1028 /bin/java -Xms1800m -Xmx1800m -Djava.awt.headless=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError -XX:+DisableExplicitGC -Dfile.encoding=UTF-8 -Djna.nosys=true -Des.path.home=/usr/share/elasticsearch -cp /usr/share/elasticsearch/lib/elasticsearch-2.4.6.jar:/usr/share/elasticsearch/lib/* org.elasticsearch.bootstrap.Elasticsearch start -Des.pidfile=/var/run/elasticsearch/elasticsearch.pid -Des.default.path.home=/usr/share/elasticsearch -Des.default.path.logs=/var/log/elasticsearch -Des.default.path.data=/var/lib/elasticsearch -Des.default.path.conf=/etc/elasticsearch
+
+12月 06 13:46:04 localhost.localdomain elasticsearch[1028]: at org.elasticsearch.snapshots.RestoreService$1.validateExistingIndex(RestoreService.java:351)
+12月 06 13:46:04 localhost.localdomain elasticsearch[1028]: at org.elasticsearch.snapshots.RestoreService$1.execute(RestoreService.java:258)
+12月 06 13:46:04 localhost.localdomain elasticsearch[1028]: at org.elasticsearch.cluster.ClusterStateUpdateTask.execute(ClusterStateUpdateTask.java:45)
+12月 06 13:46:04 localhost.localdomain elasticsearch[1028]: at org.elasticsearch.cluster.service.InternalClusterService.runTasksForExecutor(InternalClusterService.java:480)
+12月 06 13:46:04 localhost.localdomain elasticsearch[1028]: at org.elasticsearch.cluster.service.InternalClusterService$UpdateTask.run(InternalClusterService.java:784)
+12月 06 13:46:04 localhost.localdomain elasticsearch[1028]: at org.elasticsearch.common.util.concurrent.PrioritizedEsThreadPoolExecutor$TieBreakingPrioritizedRunnable.runAndClean(PrioritizedEsThreadPoolExecutor.java:231)
+12月 06 13:46:04 localhost.localdomain elasticsearch[1028]: at org.elasticsearch.common.util.concurrent.PrioritizedEsThreadPoolExecutor$TieBreakingPrioritizedRunnable.run(PrioritizedEsThreadPoolExecutor.java:194)
+12月 06 13:46:04 localhost.localdomain elasticsearch[1028]: at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+12月 06 13:46:04 localhost.localdomain elasticsearch[1028]: at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+12月 06 13:46:04 localhost.localdomain elasticsearch[1028]: at java.lang.Thread.run(Thread.java:748)
+● kibana.service - Kibana
+   Loaded: loaded (/etc/systemd/system/kibana.service; enabled; vendor preset: disabled)
+   Active: active (running) since 水 2017-12-06 13:42:43 JST; 3min 21s ago
+ Main PID: 1468 (node)
+   CGroup: /system.slice/kibana.service
+           └─1468 /opt/kibana/bin/../node/bin/node --no-warnings /opt/kibana/bin/../src/cli
+
+12月 06 13:42:43 localhost.localdomain systemd[1]: Started Kibana.
+12月 06 13:42:43 localhost.localdomain systemd[1]: Starting Kibana...
+● nginx.service - nginx - high performance web server
+   Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; vendor preset: disabled)
+   Active: active (running) since 水 2017-12-06 13:40:40 JST; 5min ago
+     Docs: http://nginx.org/en/docs/
+ Main PID: 1042 (nginx)
+   CGroup: /system.slice/nginx.service
+           ├─1042 nginx: master process /usr/sbin/nginx -c /etc/nginx/nginx.con
+           └─1053 nginx: worker process                   
+
+12月 06 13:40:40 localhost.localdomain systemd[1]: Starting nginx - high performance web server...
+12月 06 13:40:40 localhost.localdomain nginx[1022]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+12月 06 13:40:40 localhost.localdomain nginx[1022]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+12月 06 13:40:40 localhost.localdomain systemd[1]: Failed to read PID from file /run/nginx.pid: Invalid argument
+12月 06 13:40:40 localhost.localdomain systemd[1]: Started nginx - high performance web server.
+2017年 12月  6日 水曜日 13:46:04 JST
+**********************
+Install completed.
+**********************
