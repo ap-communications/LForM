@@ -32,7 +32,7 @@ mkdir -p /var/log/kibana
 mkdir  /var/log/LForM_cron
 
 source /root/.bash_profile
-cp LForM/system/LForM_pa_log /etc/logrotate.d/
+cp LForM/system/LForM_fo_log /etc/logrotate.d/
 cp LForM/system/LForM_cron_log /etc/logrotate.d/
 cp LForM/system/kibana_log /etc/logrotate.d/
 #cp LForM/system/td-agent_log /etc/logrotate.d/
