@@ -9,6 +9,13 @@ curl -XPUT localhost:9200/_template/template_01 -d '
   },
   "mappings" : {
     "_default_" : {
+      "dynamic_templates": [{
+        "notanalyzed": {
+          "match": "*",
+          "match_mapping_type": "string",
+          "mapping": {"type": "string", "index": "not_analyzed"}
+        }
+      }],
      "properties": {
       "receive_time": {"type":"date","format":"strict_date_optional_time||epoch_second"},
       "appact" : {"type":"string","index":"not_analyzed"},
@@ -94,6 +101,7 @@ curl -XPUT localhost:9200/_template/template_01 -d '
       "fortiguardresp" : {"type":"string","index":"not_analyzed"},
       "size" : {"type":"string","index":"not_analyzed"},
       "devid" : {"type":"string","index":"not_analyzed"},
+      "devname" : {"type":"string","index":"not_analyzed"},
       "logdesc" : {"type":"string","index":"not_analyzed"},
       "status" : {"type":"string","index":"not_analyzed"},
       "ui" : {"type":"string","index":"not_analyzed"},
@@ -470,6 +478,7 @@ curl -XPUT localhost:9200/_template/template_01 -d '
 }
 '
 
+
 curl -XPUT localhost:9200/_template/template_02 -d '
 {
   "template" : "forti_system_*",
@@ -479,3 +488,5 @@ curl -XPUT localhost:9200/_template/template_02 -d '
   }
 }
 '
+
+
