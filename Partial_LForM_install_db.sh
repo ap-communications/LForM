@@ -11,11 +11,11 @@ echo `date`
 elasticsearch_version="elasticsearch-2.4.6"
 java_version="java-1.8.0"
 curator_version="3.5.1"
-fluentd_version="td-agent-2.3.1"
-gem_elastic_version="1.11.0"
-gem_polling_version="0.1.5"
-gem_snmp_version="1.2.0"
-gem_fluent_snmp_version="0.0.9"
+#fluentd_version="td-agent-2.3.1"
+#gem_elastic_version="1.11.0"
+#gem_polling_version="0.1.5"
+#gem_snmp_version="1.2.0"
+#gem_fluent_snmp_version="0.0.9"
 kibana_version="kibana-4.6.6"
 nginx_version="nginx-1.10.1"
 
@@ -24,9 +24,10 @@ nginx_version="nginx-1.10.1"
 echo "====Preparation===="
 
 mkdir /var/log/LForM
-mkdir -p /opt/LForM/fluentd/lib
-mkdir -p /opt/LForM/elasticsearch
-mkdir /var/lib/fluentd_buffer
+mkdir /opt/LForM/
+#mkdir -p /opt/LForM/fluentd/lib
+mkdir -p /var/log/elasticsearch/
+#mkdir /var/lib/fluentd_buffer
 mkdir -p /var/log/kibana
 mkdir  /var/log/LForM_cron
 
@@ -34,7 +35,7 @@ source /root/.bash_profile
 cp LForM/system/LForM_fo_log /etc/logrotate.d/
 cp LForM/system/LForM_cron_log /etc/logrotate.d/
 cp LForM/system/kibana_log /etc/logrotate.d/
-cp LForM/system/td-agent_log /etc/logrotate.d/
+#cp LForM/system/td-agent_log /etc/logrotate.d/
 cp LForM/system/nginx_log /etc/logrotate.d/
 
 cp LForM/system/db_open.sh /opt/LForM/
@@ -43,9 +44,9 @@ chmod 711 /opt/LForM/db_open.sh
 chmod -R 711 /opt/LForM/cron_file
 
 
-cp -p /etc/rsyslog.conf /etc/rsyslog.conf.`date '+%Y%m%d'`
-\cp -f LForM/system/rsyslog.conf /etc/rsyslog.conf
-systemctl restart rsyslog
+#cp -p /etc/rsyslog.conf /etc/rsyslog.conf.`date '+%Y%m%d'`
+#\cp -f LForM/system/rsyslog.conf /etc/rsyslog.conf
+#systemctl restart rsyslog
 
 
 ## Elasticsearch
@@ -80,36 +81,36 @@ yum -y install $kibana_version
 chown kibana:kibana /var/log/kibana
 
 ## Fluentd
-echo "====Fluentd===="
+#echo "====Fluentd===="
 
 #rpm --import https://packages.treasuredata.com/GPG-KEY-td-agent
 
-cat <<EOF> /etc/yum.repos.d/td.repo
-[treasuredata]
-name=TreasureData
-baseurl=http://packages.treasuredata.com/2/redhat/\$releasever/\$basearch
-gpgcheck=0
-gpgkey=https://packages.treasuredata.com/GPG-KEY-td-agent
-EOF
+#cat <<EOF> /etc/yum.repos.d/td.repo
+#[treasuredata]
+#name=TreasureData
+#baseurl=http://packages.treasuredata.com/2/redhat/\$releasever/\$basearch
+#gpgcheck=0
+#gpgkey=https://packages.treasuredata.com/GPG-KEY-td-agent
+#EOF
 
-yum -y install $fluentd_version
-yum -y install initscripts
+#yum -y install $fluentd_version
+#yum -y install initscripts
 
 ## Fluentd Plugin
-echo "====Fluentd Plugin===="
+#echo "====Fluentd Plugin===="
 
-td-agent-gem install fluent-plugin-elasticsearch -v $gem_elastic_version
-td-agent-gem install polling  -v $gem_polling_version
-td-agent-gem install snmp -v $gem_snmp_version
-td-agent-gem install fluent-plugin-snmp -v $gem_fluent_snmp_version 
- 
- 
+#td-agent-gem install fluent-plugin-elasticsearch -v $gem_elastic_version
+#td-agent-gem install polling  -v $gem_polling_version
+#td-agent-gem install snmp -v $gem_snmp_version
+#td-agent-gem install fluent-plugin-snmp -v $gem_fluent_snmp_version
+
+
 ## curator
 echo "====curator===="
 
 curl -kL https://bootstrap.pypa.io/get-pip.py | python
 pip install elasticsearch-curator==$curator_version
- 
+
 ## nginx
 echo "====nginx===="
 
@@ -150,12 +151,12 @@ chown elasticsearch:elasticsearch /var/log/elasticsearch/
 chown elasticsearch:elasticsearch /var/lib/elasticsearch/
 
 ### Fluentd
-\cp -pf LForM/fluentd/config/td-agent.conf /etc/td-agent/td-agent.conf
-\cp -pf LForM/fluentd/lib/parser_fortigate_syslog.rb /etc/td-agent/plugin/parser_fortigate_syslog.rb
-# \cp -pf LForM/fluentd/lib/snmp_get_out_exec.rb /opt/LForM/fluentd/lib/
+#\cp -pf LForM/fluentd/config/td-agent.conf /etc/td-agent/td-agent.conf
+#\cp -pf LForM/fluentd/lib/parser_fortigate_syslog.rb /etc/td-agent/plugin/parser_fortigate_syslog.rb
+#\cp -pf LForM/fluentd/lib/snmp_get_out_exec.rb /opt/LForM/fluentd/lib/
 
-sed -i -e "s/TD_AGENT_USER=td-agent/TD_AGENT_USER=root/g" /etc/init.d/td-agent
-sed -i -e "s/TD_AGENT_GROUP=td-agent/TD_AGENT_GROUP=root/g" /etc/init.d/td-agent
+#sed -i -e "s/TD_AGENT_USER=td-agent/TD_AGENT_USER=root/g" /etc/init.d/td-agent
+#sed -i -e "s/TD_AGENT_GROUP=td-agent/TD_AGENT_GROUP=root/g" /etc/init.d/td-agent
 
 ### nginx
 cp -p /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.`date '+%Y%m%d'`
@@ -173,27 +174,37 @@ sed -i -e "s/SELINUX=enforcing/SELINUX=permissive/g" /etc/selinux/config > /dev/
 
 ## Firewalld Setting
 
-cat <<EOF> /etc/firewalld/services/syslog_tcp.xml
-<?xml version="1.0" encoding="utf-8"?>
-<service>
-<short>SYSLOG_TCP</short>
-<description>SYSLOG protocol</description>
-<port protocol="tcp" port="514"/>
-</service>
-EOF
+#cat <<EOF> /etc/firewalld/services/syslog_tcp.xml
+#<?xml version="1.0" encoding="utf-8"?>
+#<service>
+#<short>SYSLOG_TCP</short>
+#<description>SYSLOG protocol</description>
+#<port protocol="tcp" port="514"/>
+#</service>
+#EOF
 
-cat <<EOF> /etc/firewalld/services/syslog_udp.xml
+#cat <<EOF> /etc/firewalld/services/syslog_udp.xml
+#<?xml version="1.0" encoding="utf-8"?>
+#<service>
+#<short>SYSLOG_UDP</short>
+#<description>SYSLOG protocol</description>
+#<port protocol="udp" port="514"/>
+#</service>
+#EOF
+
+cat <<EOF> /etc/firewalld/services/elasticsearch.xml
 <?xml version="1.0" encoding="utf-8"?>
 <service>
-<short>SYSLOG_UDP</short>
-<description>SYSLOG protocol</description>
-<port protocol="udp" port="514"/>
+<short>Elasticsearch</short>
+<description>Elasticsearch Data protocol</description>
+<port protocol="tcp" port="9200"/>
 </service>
 EOF
 
 firewall-cmd --reload > /dev/null
-firewall-cmd --permanent --zone=public --add-service=syslog_tcp > /dev/null
-firewall-cmd --permanent --zone=public --add-service=syslog_udp > /dev/null
+#firewall-cmd --permanent --zone=public --add-service=syslog_tcp > /dev/null
+#firewall-cmd --permanent --zone=public --add-service=syslog_udp > /dev/null
+firewall-cmd --permanent --zone=public --add-service=elasticsearch > /dev/null
 firewall-cmd --permanent --add-service=http > /dev/null
 firewall-cmd --reload > /dev/null
 
@@ -240,7 +251,7 @@ wait
 # Auto start
  echo "====Auto start===="
 
-systemctl enable td-agent.service
+#systemctl enable td-agent.service
 systemctl enable elasticsearch.service
 systemctl enable kibana.service
 systemctl enable nginx.service
@@ -251,7 +262,7 @@ systemctl start kibana.service
 systemctl start nginx.service
 systemctl start td-agent.service
 
-systemctl status td-agent.service
+#systemctl status td-agent.service
 systemctl status elasticsearch.service
 systemctl status kibana.service
 systemctl status nginx.service
