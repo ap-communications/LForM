@@ -246,7 +246,6 @@ systemctl enable kibana.service
 systemctl enable nginx.service
 
 
-#systemctl start elasticsearch.service
 systemctl start kibana.service
 systemctl start nginx.service
 systemctl start td-agent.service
