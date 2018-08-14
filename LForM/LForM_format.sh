@@ -40,7 +40,7 @@ curl -XPUT localhost:9200/_template/template_01 -d '
       "proto" : {"type":"integer","index":"not_analyzed"},
       "ref" : {"type":"string","index":"not_analyzed"},
       "service" : {"type":"string","index":"not_analyzed"},
-      "sessionid" : {"type":"integer","index":"not_analyzed"},
+      "sessionid" : {"type":"long","index":"not_analyzed"},
       "severity" : {"type":"string","index":"not_analyzed"},
       "srcintf" : {"type":"string","index":"not_analyzed"},
       "srcip" : {"type":"ip","index":"not_analyzed"},
@@ -233,7 +233,7 @@ curl -XPUT localhost:9200/_template/template_01 -d '
       "disklograte" : {"type":"long","index":"not_analyzed"},
       "fazlograte" : {"type":"long","index":"not_analyzed"},
       "setuprate" : {"type":"long","index":"not_analyzed"},
-      "totalsession" : {"type":"integer","index":"not_analyzed"},
+      "totalsession" : {"type":"long","index":"not_analyzed"},
       "addr_type" : {"type":"string","index":"not_analyzed"},
       "fwserver_name" : {"type":"string","index":"not_analyzed"},
       "cert-type" : {"type":"string","index":"not_analyzed"},
@@ -321,7 +321,7 @@ curl -XPUT localhost:9200/_template/template_01 -d '
       "max" : {"type":"integer","index":"not_analyzed"},
       "maxminor" : {"type":"integer","index":"not_analyzed"},
       "created" : {"type":"string","index":"not_analyzed"},
-      "session_id" : {"type":"integer","index":"not_analyzed"},
+      "session_id" : {"type":"long","index":"not_analyzed"},
       "major" : {"type":"integer","index":"not_analyzed"},
       "minor" : {"type":"integer","index":"not_analyzed"},
       "ssl2" : {"type":"integer","index":"not_analyzed"},
@@ -477,7 +477,6 @@ curl -XPUT localhost:9200/_template/template_01 -d '
   }
 }
 '
-
 
 curl -XPUT localhost:9200/_template/template_02 -d '
 {
