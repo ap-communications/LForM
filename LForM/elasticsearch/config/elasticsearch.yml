@@ -31,10 +31,12 @@ node.name: LForM_node1
 # Path to directory where to store the data (separate multiple locations by comma):
 #
 # path.data: /path/to/data
+path.data: /var/lib/elasticsearch
 #
 # Path to log files:
 #
 # path.logs: /path/to/logs
+path.logs: /var/log/elasticsearch
 #
 # ----------------------------------- Memory -----------------------------------
 #
@@ -98,16 +100,39 @@ node.name: LForM_node1
 #
 # ---------------------------------- Index -----------------------------------
 #
-index.refresh_interval: 5s
+#index.refresh_interval: 5s
 
 # ---------------------------------- Snapshot -----------------------------------
 #
 
-path.repo: ["/var/lib/LForM/backup/"]
+#path.repo: ["/var/lib/LForM/backup/"]
 
 # ---------------------------------- Queue size -----------------------------------
 #
-threadpool.index.queue_size: -1
-threadpool.bulk.queue_size: -1
-threadpool.search.queue_size: -1
-threadpool.get.queue_size: -1
+# Enable security features
+xpack.security.enabled: true
+xpack.security.http.ssl:
+  enabled: true
+  keystore.path: /etc/elasticsearch/certs/LForM_node1-http.p12
+  #client_authentication: optional
+
+# Enable encryption and mutual authentication between cluster nodes
+xpack.security.transport.ssl:
+  enabled: true
+  verification_mode: certificate
+  keystore.path: /etc/elasticsearch/certs/elastic-node-certificates.p12
+  #keystore.password: 70Pf4k1RRIO1zFq9rsn-eg
+  truststore.path: /etc/elasticsearch/certs/transport.p12
+  #keystore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  #truststore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  client_authentication: optional
+
+# Allow HTTP API connections from localhost and local networks
+# Connections are encrypted and require user authentication
+http.host: [_local_, _site_]
+discovery.type: single-node
+
+# Allow other nodes to join the cluster from localhost and local networks
+# Connections are encrypted and mutually authenticated
+transport.host: [_local_, _site_]
+

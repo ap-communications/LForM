@@ -3,6 +3,7 @@
 
 # The host to bind the server to.
 # server.host: "0.0.0.0"
+server.host: "0.0.0.0"
 
 # If you are running kibana behind a proxy, and want to mount it at a path,
 # specify that path here. The basePath can't end in a slash.
@@ -24,7 +25,7 @@
 
 # The default application to load.
 # kibana.defaultAppId: "discover"
-kibana.defaultAppId: "dashboard/Dashboard"
+#kibana.defaultAppId: "dashboard/Dashboard"
 
 # If your Elasticsearch is protected with basic auth, these are the user credentials
 # used by the Kibana server to perform maintenance on the kibana_index at startup. Your Kibana
@@ -69,13 +70,43 @@ elasticsearch.requestTimeout: 3600000
 
 # If you would like to send the log output to a file you can set the path below.
 # logging.dest: stdout
-logging.dest: /var/log/kibana/LForM_kibana_log
+#logging.dest: /var/log/kibana/LForM_kibana_log
+logging:
+  appenders:
+    file:
+      type: file
+      fileName: /var/log/kibana/LForM_kibana_log/kibana.log
+      layout:
+        type: pattern
+  root:
+    appenders: [default,file]
 
 # Set this to true to suppress all logging output.
 # logging.silent: false
 
 # Set this to true to suppress all logging output except for error messages.
-logging.quiet: true 
+#logging.quiet: true 
 
 # Set this to true to log all events, including system usage information and all requests.
 # logging.verbose: false
+
+server.ssl.enabled: true
+server.publicBaseUrl: "https://127.0.0.1:5601"
+server.ssl.certificate: "/etc/kibana/certs/ca.crt"
+server.ssl.key: "/etc/kibana/certs/ca.key"
+
+elasticsearch.hosts:  [ "https://10.0.0.102:9200" ]
+elasticsearch.username: "kibana_system"
+elasticsearch.password: "apc1116"
+elasticsearch.ssl.verificationMode: full
+elasticsearch.ssl.certificateAuthorities: [ "/etc/kibana/certs/elasticsearch-ca.pem" ]
+
+
+
+# =================== Search Autocomplete ===================
+# Time in milliseconds to wait for autocomplete suggestions from Elasticsearch.
+# This value must be a whole number greater than zero. Defaults to 1000ms
+#data.autocomplete.valueSuggestions.timeout: 1000
+# Maximum number of documents loaded by each shard to generate autocomplete suggestions.
+# This value must be a whole number greater than zero. Defaults to 100_000
+#data.autocomplete.valueSuggestions.terminateAfter: 100000
