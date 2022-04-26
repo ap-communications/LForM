@@ -25,7 +25,7 @@ server.host: "0.0.0.0"
 
 # The default application to load.
 # kibana.defaultAppId: "discover"
-#kibana.defaultAppId: "dashboard/Dashboard"
+#kibana.defaultAppId: "48f517b0-beb6-11ec-b276-af939f469334"
 
 # If your Elasticsearch is protected with basic auth, these are the user credentials
 # used by the Kibana server to perform maintenance on the kibana_index at startup. Your Kibana
@@ -90,10 +90,10 @@ logging:
 # Set this to true to log all events, including system usage information and all requests.
 # logging.verbose: false
 
-server.ssl.enabled: true
+#server.ssl.enabled: true
 server.publicBaseUrl: "https://127.0.0.1:5601"
-server.ssl.certificate: "/etc/kibana/certs/ca.crt"
-server.ssl.key: "/etc/kibana/certs/ca.key"
+#server.ssl.certificate: "/etc/kibana/certs/ca.crt"
+#server.ssl.key: "/etc/kibana/certs/ca.key"
 
 elasticsearch.hosts:  [ "https://10.0.0.102:9200" ]
 elasticsearch.username: "kibana_system"

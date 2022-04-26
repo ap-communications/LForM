@@ -8,16 +8,12 @@ echo `date`
 
 # Version definition
 
-elasticsearch_version="elasticsearch-2.4.6"
+elasticsearch_version="8.1.1"
 java_version="java-1.8.0"
-curator_version="3.5.1"
-fluentd_version="td-agent-2.3.1"
-gem_elastic_version="1.11.0"
-gem_polling_version="0.1.5"
-gem_snmp_version="1.2.0"
-gem_fluent_snmp_version="0.0.9"
-kibana_version="kibana-4.6.6"
-nginx_version="nginx-1.10.1"
+gem_elastic_version="7.16.3"
+gem_fluent_elastic_version="5.1.4"
+nginx_version="nginx-1.18.0"
+
 
 # Preparation
 
@@ -28,124 +24,72 @@ mkdir -p /opt/LForM/fluentd/lib
 mkdir -p /opt/LForM/elasticsearch
 mkdir /var/lib/fluentd_buffer
 mkdir -p /var/log/kibana
-mkdir  /var/log/LForM_cron
 
 source /root/.bash_profile
-cp LForM/system/LForM_fo_log /etc/logrotate.d/
-cp LForM/system/LForM_cron_log /etc/logrotate.d/
-cp LForM/system/kibana_log /etc/logrotate.d/
-cp LForM/system/td-agent_log /etc/logrotate.d/
-cp LForM/system/nginx_log /etc/logrotate.d/
-
-cp LForM/system/db_open.sh /opt/LForM/
-cp -R LForM/system/cron_file /opt/LForM/
-chmod 711 /opt/LForM/db_open.sh
-chmod -R 711 /opt/LForM/cron_file
 
 
 cp -p /etc/rsyslog.conf /etc/rsyslog.conf.`date '+%Y%m%d'`
-\cp -f LForM/system/rsyslog.conf /etc/rsyslog.conf
+\cp -f /etc/rsyslog.d/50-default.conf /etc/rsyslog.d/50-default.conf.`date '+%Y%m%d'`
+\cp -f LForM/system/50-default.conf /etc/rsyslog.d/50-default.conf
 systemctl restart rsyslog
 
 
 ## Elasticsearch
 echo "====Elasticsearch===="
 
-cat <<EOF> /etc/yum.repos.d/elasticsearch.repo
-[elasticsearch-2.x]
-name=Elasticsearch repository for 2.x packages
-baseurl=http://packages.elastic.co/elasticsearch/2.x/centos
-gpgcheck=1
-gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
-enabled=1
-EOF
-
-yum -y install $elasticsearch_version
-yum -y install $java_version
+sudo apt-get install -y apt-transport-https
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
+sudo apt-get update && sudo apt-get install -y elasticsearch=$elasticsearch_version
 
 
 ## kibana
 echo "====kibana===="
-
-cat <<EOF> /etc/yum.repos.d/kibana.repo
-[kibana-4.6]
-name=Kibana repository for 4.6.x packages
-baseurl=http://packages.elastic.co/kibana/4.6/centos
-gpgcheck=1
-gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
-enabled=1
-EOF
-
-yum -y install $kibana_version
-chown kibana:kibana /var/log/kibana
+curl -O "https://lform-repo.s3.ap-northeast-1.amazonaws.com/pkg/kibana-8.1.1-SNAPSHOT-amd64.deb"
+curl -O "https://lform-repo.s3.ap-northeast-1.amazonaws.com/pkg/kibana-8.1.1-SNAPSHOT-amd64.deb.sha1.txt"
+echo `sha1sum kibana-8.1.1-SNAPSHOT-amd64.deb`
+echo `cat kibana-8.1.1-SNAPSHOT-amd64.deb.sha1.txt`
+sudo dpkg -i kibana-8.1.1-amd64.deb
 
 ## Fluentd
 echo "====Fluentd===="
 
-#rpm --import https://packages.treasuredata.com/GPG-KEY-td-agent
-
-cat <<EOF> /etc/yum.repos.d/td.repo
-[treasuredata]
-name=TreasureData
-baseurl=http://packages.treasuredata.com/2/redhat/\$releasever/\$basearch
-gpgcheck=0
-gpgkey=https://packages.treasuredata.com/GPG-KEY-td-agent
-EOF
-
-yum -y install $fluentd_version
-yum -y install initscripts
+ulimit -n 1048576
+curl -fsSL https://toolbelt.treasuredata.com/sh/install-debian-bullseye-td-agent4.sh | sh
 
 ## Fluentd Plugin
 echo "====Fluentd Plugin===="
 
+td-agent-gem install elasticsearch -v $gem_elastic_version
 td-agent-gem install fluent-plugin-elasticsearch -v $gem_elastic_version
-td-agent-gem install polling  -v $gem_polling_version
-td-agent-gem install snmp -v $gem_snmp_version
-td-agent-gem install fluent-plugin-snmp -v $gem_fluent_snmp_version 
  
- 
-## curator
-echo "====curator===="
-
-curl -kL https://bootstrap.pypa.io/get-pip.py | python
-pip install elasticsearch-curator==$curator_version
  
 ## nginx
 echo "====nginx===="
 
-cat <<EOF> /etc/yum.repos.d/nginx.repo
-[nginx]
-name=nginx repo
-baseurl=http://nginx.org/packages/centos/7/x86_64/
-gpgcheck=0
-enabled=1
+curl -fsSL https://nginx.org/keys/nginx_signing.key | sudo apt-key add -
+
+cat <<EOF> /etc/apt/sources.list.d/nginx.list
+deb https://nginx.org/packages/ubuntu/ focal nginx 
+deb-src https://nginx.org/packages/ubuntu/ focal nginx
 EOF
 
-yum install -y --enablerepo=nginx $nginx_version
-yum install -y httpd-tools
+sudo apt -y install nginx=$nginx_version
 
 ## Setting file copy
 echo "====Setting file copy===="
 
 ### kibana
-\cp -pf LForM/kibana/config/kibana.yml /opt/kibana/config/kibana.yml
-cp -pf /opt/kibana/src/ui/views/ui_app.jade /opt/kibana/src/ui/views/ui_app.jade.`date '+%Y%m%d'`
-\cp -pf LForM/kibana/ui_app.jade /opt/kibana/src/ui/views/
-cp -pf /opt/kibana/src/ui/views/chrome.jade /opt/kibana/src/ui/views/chrome.jade.`date '+%Y%m%d'`
-\cp -pf LForM/kibana/chrome.jade /opt/kibana/src/ui/views/
-cp -pf /opt/kibana/optimize/bundles/kibana.bundle.js /opt/kibana/optimize/bundles/kibana.bundle.js.`date '+%Y%m%d'`
-\cp -pf LForM/kibana/kibana.bundle.js /opt/kibana/optimize/bundles/
-cp -pf LForM/kibana/LForM.png /opt/kibana/optimize/bundles/src/ui/public/images/
-\cp -pf LForM/kibana/elk.ico /opt/kibana/optimize/bundles/src/ui/public/images/
+cp -pf LForM/kibana/config/kibana.yml /etc/kibana/config/kibana.yml
+mkdir /etc/kibana/certs
+
 
 ### Elasticsearch
-echo `LForM/elasticsearch/heapmemory_set.sh`
+echo `LForM/elasticsearch/jvmoptions_set.sh`
 wait
 
-\cp -pf LForM/elasticsearch/config/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
-\cp -ar LForM/elasticsearch/config/logging.yml /etc/elasticsearch/logging.yml
+\cp -pf PALallax/elasticsearch/config/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 chown elasticsearch:elasticsearch /etc/elasticsearch/elasticsearch.yml
-chown elasticsearch:elasticsearch /etc/elasticsearch/logging.yml
 chown elasticsearch:elasticsearch /var/log/elasticsearch/
 chown elasticsearch:elasticsearch /var/lib/elasticsearch/
 
@@ -165,44 +109,16 @@ cp -p LForM/nginx/config/.htpasswd /etc/nginx/conf.d/.htpasswd
 \cp -pf LForM/nginx/config/nginx.conf /etc/nginx/nginx.conf
 
 
-## SELinux Setting
-setenforce 0
+## ufw check
 
-\cp -pr /etc/selinux/config /etc/selinux/config.`date '+%Y%m%d'`
-sed -i -e "s/SELINUX=enforcing/SELINUX=permissive/g" /etc/selinux/config > /dev/null
+echo `sudo ufw status`
 
-## Firewalld Setting
-
-cat <<EOF> /etc/firewalld/services/syslog_tcp.xml
-<?xml version="1.0" encoding="utf-8"?>
-<service>
-<short>SYSLOG_TCP</short>
-<description>SYSLOG protocol</description>
-<port protocol="tcp" port="514"/>
-</service>
-EOF
-
-cat <<EOF> /etc/firewalld/services/syslog_udp.xml
-<?xml version="1.0" encoding="utf-8"?>
-<service>
-<short>SYSLOG_UDP</short>
-<description>SYSLOG protocol</description>
-<port protocol="udp" port="514"/>
-</service>
-EOF
-
-firewall-cmd --reload > /dev/null
-firewall-cmd --permanent --zone=public --add-service=syslog_tcp > /dev/null
-firewall-cmd --permanent --zone=public --add-service=syslog_udp > /dev/null
-firewall-cmd --permanent --add-service=http > /dev/null
-firewall-cmd --reload > /dev/null
 
 # FileDescriptor Setting
 
-ulimit -n 65536
+echo `ulimit -n`
+# Default setting for Ubuntu Focal is 1048576
 
-\cp -pr /etc/security/limits.conf /etc/security/limits.conf.`date '+%Y%m%d'`
-sed -i -e "/^# End of file$/i * soft nofile 65536\n* hard nofile 65536" /etc/security/limits.conf
 
 # Disable yum update
 
@@ -213,28 +129,38 @@ echo "====LForM database copy===="
 
 mkdir -p /var/lib/LForM/backup
 chown -R elasticsearch:elasticsearch /var/lib/LForM/backup/
-cp -pr LForM/LForM_db/* /var/lib/LForM/backup/
 
 systemctl start elasticsearch.service
-sleep 120s
+sleep 180s
 systemctl status elasticsearch.service
 
-curl -XPUT 'http://localhost:9200/_snapshot/LForM_snapshot' -d '{
-    "type": "fs",
-    "settings": {
-        "location": "/var/lib/LForM/backup/",
-        "compress": true
-    }
-}'
+## Kibana Settings
 
-curl -XPOST localhost:9200/_snapshot/LForM_snapshot/snapshot_kibana/_restore
+systemctl start kibana.service
+sleep 300s
+systemctl status kibana.service
 
-echo `LForM/LForM_format.sh`
-wait
+#curl -XPUT 'http://localhost:9200/_snapshot/LForM_snapshot' -d '{
+#    "type": "fs",
+#    "settings": {
+#        "location": "/var/lib/LForM/backup/",
+#        "compress": true
+#    }
+#}'
+
+#curl -XPOST localhost:9200/_snapshot/LForM_snapshot/snapshot_kibana/_restore
+
+#echo `LForM/LForM_format.sh`
+#wait
+#sleep 60s
+
+#curl -X POST "http://localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@LForM/kibana/export.ndjson
+#wait
+#echo `PALallax/kibana_setting.sh`
+#wait
 
 ## Logrotate Settings
-
-
+#echo `LForM/LForM_ilm_policy.sh`
 
 
 # Auto start
