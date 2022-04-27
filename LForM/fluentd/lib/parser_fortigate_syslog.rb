@@ -1,9 +1,12 @@
 # coding: utf-8
 
-module Fluent
- class TextParser
+require 'fluent/parser'
+#require 'fluent/output'
+#require 'fluent/plugin_helper'
+
+module Fluent::Plugin
   class SyslogPaser < Parser
-   Plugin.register_parser('fortigate_syslog', self)
+    Fluent::Plugin.register_parser('fortigate_syslog', self)
 
 
     def initialize
@@ -59,8 +62,10 @@ module Fluent
       end
 
       #Log emit
-      time = Engine.now
-      Engine.emit(tag, time, record_value)
+      time = Fluent::Engine.now
+      router.emit(tag, time, record_value)
+      #time = Engine.now
+      #Engine.emit(tag, time, record_value)
     end
 
     def date_formatcheck(datetimestr)
@@ -73,6 +78,5 @@ module Fluent
       Time.parse(syslog_time).to_i
     end
 
-  end
  end
 end
