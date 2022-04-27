@@ -1,6 +1,6 @@
 # LForM
 
-LForM is a traffic/security(UTM) log viewer for Firewalls(FortiGate 5.4.3).<br>
+LForM is a traffic/security(UTM) log viewer for Firewalls(FortiGate 7.0.4).<br>
 LForM collects the log of the next-generation firewall, to visualize the traffic and security log.
 
 # Component
