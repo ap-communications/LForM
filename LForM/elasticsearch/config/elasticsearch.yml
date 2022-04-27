@@ -120,8 +120,7 @@ xpack.security.http.ssl:
 xpack.security.transport.ssl:
   enabled: true
   verification_mode: certificate
-  keystore.path: /etc/elasticsearch/certs/elastic-node-certificates.p12
-  #keystore.password: 70Pf4k1RRIO1zFq9rsn-eg
+  keystore.path: /etc/elasticsearch/certs/LForM-node-certificates.p12
   truststore.path: /etc/elasticsearch/certs/transport.p12
   #keystore.path: /etc/elasticsearch/certs/elastic-certificates.p12
   #truststore.path: /etc/elasticsearch/certs/elastic-certificates.p12

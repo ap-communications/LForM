@@ -91,7 +91,7 @@ logging:
 # logging.verbose: false
 
 #server.ssl.enabled: true
-server.publicBaseUrl: "https://127.0.0.1:5601"
+server.publicBaseUrl: "https://localhost:5601"
 #server.ssl.certificate: "/etc/kibana/certs/ca.crt"
 #server.ssl.key: "/etc/kibana/certs/ca.key"
 

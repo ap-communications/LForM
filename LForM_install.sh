@@ -49,7 +49,7 @@ curl -O "https://lform-repo.s3.ap-northeast-1.amazonaws.com/pkg/kibana-8.1.1-SNA
 curl -O "https://lform-repo.s3.ap-northeast-1.amazonaws.com/pkg/kibana-8.1.1-SNAPSHOT-amd64.deb.sha1.txt"
 echo `sha1sum kibana-8.1.1-SNAPSHOT-amd64.deb`
 echo `cat kibana-8.1.1-SNAPSHOT-amd64.deb.sha1.txt`
-sudo dpkg -i kibana-8.1.1-amd64.deb
+sudo dpkg -i kibana-8.1.1-SNAPSHOT-amd64.deb
 
 ## Fluentd
 echo "====Fluentd===="
@@ -80,9 +80,18 @@ sudo apt -y install nginx=$nginx_version
 echo "====Setting file copy===="
 
 ### kibana
-cp -pf LForM/kibana/config/kibana.yml /etc/kibana/config/kibana.yml
+cp -pf LForM/kibana/config/kibana.yml /etc/kibana/kibana.yml
 mkdir /etc/kibana/certs
 
+cp /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.png /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.png`date '+%Y%m%d'`
+cp /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.svg /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.svg`date '+%Y%m%d'`
+cp -pf LForM/kibana/lform_favicon.png /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.png
+cp -pf LForM/kibana/lform_favicon.svg /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.svg
+
+cp -p /usr/share/kibana/src/core/server/rendering/views/logo.js /usr/share/kibana/src/core/server/rendering/views/logo.js`date '+%Y%m%d'`
+cp -p /usr/share/kibana/src/core/server/rendering/views/template.js /usr/share/kibana/src/core/server/rendering/views/template.js`date '+%Y%m%d'`
+cp -pf LForM/kibana/logo.js /usr/share/kibana/src/core/server/rendering/views/logo.js
+cp -pf LForM/kibana/template.js /usr/share/kibana/src/core/server/rendering/views/template.js
 
 ### Elasticsearch
 echo `LForM/elasticsearch/jvmoptions_set.sh`
@@ -136,31 +145,33 @@ systemctl status elasticsearch.service
 
 ## Kibana Settings
 
+ES_PASS=`cat LForM/LForM_install.log | grep "The generated password" | awk '{print $11}'`
+
 systemctl start kibana.service
 sleep 300s
 systemctl status kibana.service
 
-#curl -XPUT 'http://localhost:9200/_snapshot/LForM_snapshot' -d '{
-#    "type": "fs",
-#    "settings": {
-#        "location": "/var/lib/LForM/backup/",
-#        "compress": true
-#    }
-#}'
+curl -u elastic:$ES_PASS -XPUT 'http://localhost:9200/_snapshot/LForM_snapshot'  -H 'Content-Type: application/json' -d '{
+    "type": "fs",
+    "settings": {
+        "location": "/var/lib/LForM/backup/",
+        "compress": true
+    }
+}'
 
-#curl -XPOST localhost:9200/_snapshot/LForM_snapshot/snapshot_kibana/_restore
+curl -u elastic:$ES_PASS -XPOST localhost:9200/_snapshot/LForM_snapshot/snapshot_kibana/_restore
 
-#echo `LForM/LForM_format.sh`
-#wait
-#sleep 60s
+echo `LForM/LForM_format.sh`
+wait
+sleep 60s
 
-#curl -X POST "http://localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@LForM/kibana/export.ndjson
-#wait
-#echo `PALallax/kibana_setting.sh`
-#wait
+curl -u elastic:$ES_PASS -X POST "http://localhost:5601/api/saved_objects/_import" -H 'Content-Type: application/json' -H "kbn-xsrf: true" --form file=@LForM/kibana/export.ndjson
+wait
+echo `LForM/kibana_setting.sh`
+wait
 
 ## Logrotate Settings
-#echo `LForM/LForM_ilm_policy.sh`
+echo `LForM/LForM_ilm_policy.sh`
 
 
 # Auto start
