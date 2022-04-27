@@ -5,21 +5,20 @@ LForM collects the log of the next-generation firewall, to visualize the traffic
 
 # Component
 
-- Java : 1.8.0
-- Elasticsearch : 2.4.6
-- Fluentd(td-agent) : 2.3.1
-- Kibana : 4.6.6
-- nginx : 1.10.1
+- Java : 17.0.2
+- Elasticsearch : 8.1.1
+- Fluentd(td-agent) : 4.3.0
+- Kibana : 8.1.1
+- nginx : 1.18.0
 
 # System Requirement
 
 - Firewall
-  - FortiGate 5.4.x
+  - FortiGate 7.0.4
 
 - Server
-  - OS : CentOS 7.x
-  - CPU >= Intel® Core™ i3 , Intel® Xeon® Processor E3 Family
-  - Memory(GiB) >= 4
+  - OS : ubuntu 20.04(Focal)
+  - Memory(GiB) >= 8
   - Storage(GiB) >= 50
 
 
