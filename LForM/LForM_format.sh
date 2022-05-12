@@ -1,15 +1,15 @@
 #! /bin/bash
-PASS=`cat LForM/LForM_install.log | grep "The generated password" | awk '{print $11}'`
+PASS=`cat src/install.log | grep "The generated password" | awk '{print $11}'`
 
-curl --cacert /etc/kibana/certs/elasticsearch-ca.pem -u elastic:$PASS -XPUT "https://localhost:9200/_template/lform_template_01?pretty" -H 'Content-Type: application/json' -d '
+curl --cacert /etc/kibana/certs/elasticsearch-ca.pem -u elastic:$PASS -XPUT "https://localhost:9200/_template/forti_template_01?pretty" -H 'Content-Type: application/json' -d '
 {
   "index_patterns" : ["forti_syslog_*"],
   "settings" : {
     "number_of_shards" : 1,
     "number_of_replicas" : 0,
     "refresh_interval" : "1s",
-    "index.lifecycle.name": "lform_ilm_policy_001",      
-    "index.lifecycle.rollover_alias": "lform_index" 
+    "index.lifecycle.name": "forti_ilm_policy_001",      
+    "index.lifecycle.rollover_alias": "forti_index" 
   },
   "mappings" : {
       "dynamic_templates": [{
