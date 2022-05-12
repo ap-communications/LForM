@@ -75,7 +75,7 @@ logging:
   appenders:
     file:
       type: file
-      fileName: /var/log/kibana/LForM_kibana_log/kibana.log
+      fileName: /var/log/kibana/kibana_log/kibana.log
       layout:
         type: pattern
   root:
