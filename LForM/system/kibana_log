@@ -1,4 +1,4 @@
-/var/log/kibana/LForM_kibana_log {
+/var/log/kibana/kibana_log {
   compress
   missingok
   notifempty
