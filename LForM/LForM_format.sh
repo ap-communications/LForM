@@ -1,5 +1,5 @@
 #! /bin/bash
-PASS=`cat src/install.log | grep "The generated password" | awk '{print $11}'`
+PASS=`cat LForM/LForM_install.log | grep "The generated password" | awk '{print $11}'`
 
 curl --cacert /etc/kibana/certs/elasticsearch-ca.pem -u elastic:$PASS -XPUT "https://localhost:9200/_template/forti_template_01?pretty" -H 'Content-Type: application/json' -d '
 {

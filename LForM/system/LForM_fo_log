@@ -1,4 +1,4 @@
-/var/log/APC/local6_forti.log {
+/var/log/LForM/LForM_local6_forti.log {
   compress
   missingok
   notifempty
