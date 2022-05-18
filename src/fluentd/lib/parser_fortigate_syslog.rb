@@ -1,12 +1,13 @@
 # coding: utf-8
 
 require 'fluent/parser'
-#require 'fluent/output'
-#require 'fluent/plugin_helper'
+require 'fluent/output'
+require 'fluent/plugin_helper'
 
-module Fluent::Plugin
-  class SyslogPaser < Parser
-    Fluent::Plugin.register_parser('fortigate_syslog', self)
+module Fluent
+  class FortiSyslogPaser < Output
+    Plugin.register_parser('fortigate_syslog', self)
+    helpers :event_emitter
 
 
     def initialize
@@ -64,8 +65,6 @@ module Fluent::Plugin
       #Log emit
       time = Fluent::Engine.now
       router.emit(tag, time, record_value)
-      #time = Engine.now
-      #Engine.emit(tag, time, record_value)
     end
 
     def date_formatcheck(datetimestr)

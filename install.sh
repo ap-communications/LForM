@@ -12,7 +12,6 @@ elasticsearch_version="8.1.1"
 java_version="java-1.8.0"
 gem_elastic_version="7.16.3"
 gem_fluent_elastic_version="5.1.4"
-nginx_version="1.18.0-0ubuntu1.3"
 
 
 # Preparation
@@ -111,12 +110,6 @@ chown elasticsearch:elasticsearch /var/lib/elasticsearch/
 sed -i -e "s/User=td-agent/User=root/g" /lib/systemd/system/td-agent.service
 sed -i -e "s/Group=td-agent/Group=root/g" /lib/systemd/system/td-agent.service
 
-### nginx
-cp -p /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.`date '+%Y%m%d'`
-cp -p /etc/nginx/nginx.conf /etc/nginx/nginx.conf.`date '+%Y%m%d'`
-cp -p src/nginx/config/.htpasswd /etc/nginx/conf.d/.htpasswd
-\cp -pf src/nginx/config/default.conf /etc/nginx/conf.d/default.conf
-\cp -pf src/nginx/config/nginx.conf /etc/nginx/nginx.conf
 
 
 ## ufw check
@@ -143,7 +136,6 @@ chown -R elasticsearch:elasticsearch /var/lib/APC/backup/
 systemctl enable td-agent.service
 systemctl enable elasticsearch.service
 systemctl enable kibana.service
-systemctl enable nginx.service
 
 date
 echo "**********************"

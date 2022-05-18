@@ -1,7 +1,6 @@
 #! /bin/bash
 read -rsp 'Password: ' ES_PASS
 
-systemctl start nginx.service
 systemctl start td-agent.service
 systemctl start elasticsearch.service
 sleep 120
