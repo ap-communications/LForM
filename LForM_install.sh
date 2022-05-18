@@ -19,9 +19,9 @@ nginx_version="nginx-1.18.0"
 
 echo "====Preparation===="
 
-mkdir /var/log/LForM
-mkdir -p /opt/LForM/fluentd/lib
-mkdir -p /opt/LForM/elasticsearch
+mkdir /var/log/APC
+mkdir -p /opt/APC/fluentd/lib
+mkdir -p /opt/APC/elasticsearch
 mkdir /var/lib/fluentd_buffer
 mkdir -p /var/log/kibana
 
@@ -80,21 +80,21 @@ sudo apt -y install nginx=$nginx_version
 echo "====Setting file copy===="
 
 ### kibana
-cp -pf LForM/kibana/config/kibana.yml /etc/kibana/kibana.yml
+cp -pf src/kibana/config/kibana.yml /etc/kibana/kibana.yml
 mkdir /etc/kibana/certs
 
 cp /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.png /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.png`date '+%Y%m%d'`
 cp /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.svg /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.svg`date '+%Y%m%d'`
-cp -pf LForM/kibana/lform_favicon.png /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.png
-cp -pf LForM/kibana/lform_favicon.svg /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.svg
+cp -pf src/kibana/favicon.png /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.png
+cp -pf src/kibana/favicon.svg /usr/share/kibana/src/core/server/core_app/assets/favicons/favicon.svg
 
 cp -p /usr/share/kibana/src/core/server/rendering/views/logo.js /usr/share/kibana/src/core/server/rendering/views/logo.js`date '+%Y%m%d'`
 cp -p /usr/share/kibana/src/core/server/rendering/views/template.js /usr/share/kibana/src/core/server/rendering/views/template.js`date '+%Y%m%d'`
-cp -pf LForM/kibana/logo.js /usr/share/kibana/src/core/server/rendering/views/logo.js
-cp -pf LForM/kibana/template.js /usr/share/kibana/src/core/server/rendering/views/template.js
+cp -pf src/kibana/logo.js /usr/share/kibana/src/core/server/rendering/views/logo.js
+cp -pf src/kibana/template.js /usr/share/kibana/src/core/server/rendering/views/template.js
 
 ### Elasticsearch
-echo `LForM/elasticsearch/jvmoptions_set.sh`
+echo `src/elasticsearch/jvmoptions_set.sh`
 wait
 
 \cp -pf PALallax/elasticsearch/config/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
@@ -103,9 +103,9 @@ chown elasticsearch:elasticsearch /var/log/elasticsearch/
 chown elasticsearch:elasticsearch /var/lib/elasticsearch/
 
 ### Fluentd
-\cp -pf LForM/fluentd/config/td-agent.conf /etc/td-agent/td-agent.conf
-\cp -pf LForM/fluentd/lib/parser_fortigate_syslog.rb /etc/td-agent/plugin/parser_fortigate_syslog.rb
-\cp -pf LForM/fluentd/lib/snmp_get_out_exec.rb /opt/LForM/fluentd/lib/
+\cp -pf src/fluentd/config/td-agent.conf /etc/td-agent/td-agent.conf
+\cp -pf src/fluentd/lib/parser_fortigate_syslog.rb /etc/td-agent/plugin/parser_fortigate_syslog.rb
+\cp -pf src/fluentd/lib/snmp_get_out_exec.rb /opt/APC/fluentd/lib/
 
 sed -i -e "s/TD_AGENT_USER=td-agent/TD_AGENT_USER=root/g" /etc/init.d/td-agent
 sed -i -e "s/TD_AGENT_GROUP=td-agent/TD_AGENT_GROUP=root/g" /etc/init.d/td-agent
@@ -113,9 +113,9 @@ sed -i -e "s/TD_AGENT_GROUP=td-agent/TD_AGENT_GROUP=root/g" /etc/init.d/td-agent
 ### nginx
 cp -p /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.`date '+%Y%m%d'`
 cp -p /etc/nginx/nginx.conf /etc/nginx/nginx.conf.`date '+%Y%m%d'`
-cp -p LForM/nginx/config/.htpasswd /etc/nginx/conf.d/.htpasswd
-\cp -pf LForM/nginx/config/default.conf /etc/nginx/conf.d/default.conf
-\cp -pf LForM/nginx/config/nginx.conf /etc/nginx/nginx.conf
+cp -p src/nginx/config/.htpasswd /etc/nginx/conf.d/.htpasswd
+\cp -pf src/nginx/config/default.conf /etc/nginx/conf.d/default.conf
+\cp -pf src/nginx/config/nginx.conf /etc/nginx/nginx.conf
 
 
 ## ufw check
@@ -133,11 +133,11 @@ echo `ulimit -n`
 
 echo exclude=td-agent* kibana* elasticsearch* nginx* java* >> /etc/yum.conf
 
-# LForM database copy
-echo "====LForM database copy===="
+# database copy
+echo "====database copy===="
 
-mkdir -p /var/lib/LForM/backup
-chown -R elasticsearch:elasticsearch /var/lib/LForM/backup/
+mkdir -p /var/lib/APC/backup
+chown -R elasticsearch:elasticsearch /var/lib/APC/backup/
 
 systemctl start elasticsearch.service
 sleep 180s
@@ -145,33 +145,33 @@ systemctl status elasticsearch.service
 
 ## Kibana Settings
 
-ES_PASS=`cat LForM/LForM_install.log | grep "The generated password" | awk '{print $11}'`
+ES_PASS=`cat src/install.log | grep "The generated password" | awk '{print $11}'`
 
 systemctl start kibana.service
 sleep 300s
 systemctl status kibana.service
 
-curl -u elastic:$ES_PASS -XPUT 'http://localhost:9200/_snapshot/LForM_snapshot'  -H 'Content-Type: application/json' -d '{
+curl -u elastic:$ES_PASS -XPUT 'http://localhost:9200/_snapshot/snapshot'  -H 'Content-Type: application/json' -d '{
     "type": "fs",
     "settings": {
-        "location": "/var/lib/LForM/backup/",
+        "location": "/var/lib/APC/backup/",
         "compress": true
     }
 }'
 
-curl -u elastic:$ES_PASS -XPOST localhost:9200/_snapshot/LForM_snapshot/snapshot_kibana/_restore
+curl -u elastic:$ES_PASS -XPOST localhost:9200/_snapshot/snapshot/snapshot_kibana/_restore
 
-echo `LForM/LForM_format.sh`
+echo `src/format.sh`
 wait
 sleep 60s
 
-curl -u elastic:$ES_PASS -X POST "http://localhost:5601/api/saved_objects/_import" -H 'Content-Type: application/json' -H "kbn-xsrf: true" --form file=@LForM/kibana/export.ndjson
+curl -u elastic:$ES_PASS -X POST "http://localhost:5601/api/saved_objects/_import" -H 'Content-Type: application/json' -H "kbn-xsrf: true" --form file=@src/kibana/export.ndjson
 wait
-echo `LForM/kibana_setting.sh`
+echo `src/kibana_setting.sh`
 wait
 
 ## Logrotate Settings
-echo `LForM/LForM_ilm_policy.sh`
+echo `src/ilm_policy.sh`
 
 
 # Auto start
