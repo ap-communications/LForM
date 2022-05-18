@@ -12,7 +12,7 @@ elasticsearch_version="8.1.1"
 java_version="java-1.8.0"
 gem_elastic_version="7.16.3"
 gem_fluent_elastic_version="5.1.4"
-nginx_version="nginx-1.18.0"
+nginx_version="1.18.0-0ubuntu1.3"
 
 
 # Preparation
@@ -61,7 +61,7 @@ curl -fsSL https://toolbelt.treasuredata.com/sh/install-debian-bullseye-td-agent
 echo "====Fluentd Plugin===="
 
 td-agent-gem install elasticsearch -v $gem_elastic_version
-td-agent-gem install fluent-plugin-elasticsearch -v $gem_elastic_version
+td-agent-gem install fluent-plugin-elasticsearch -v $gem_fluent_elastic_version
  
  
 ## nginx
@@ -97,7 +97,8 @@ cp -pf src/kibana/template.js /usr/share/kibana/src/core/server/rendering/views/
 echo `src/elasticsearch/jvmoptions_set.sh`
 wait
 
-\cp -pf PALallax/elasticsearch/config/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
+cp /etc/elasticsearch/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml.`date '+%Y%m%d'
+cp -pf src/elasticsearch/config/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 chown elasticsearch:elasticsearch /etc/elasticsearch/elasticsearch.yml
 chown elasticsearch:elasticsearch /var/log/elasticsearch/
 chown elasticsearch:elasticsearch /var/lib/elasticsearch/
@@ -107,8 +108,8 @@ chown elasticsearch:elasticsearch /var/lib/elasticsearch/
 \cp -pf src/fluentd/lib/parser_fortigate_syslog.rb /etc/td-agent/plugin/parser_fortigate_syslog.rb
 \cp -pf src/fluentd/lib/snmp_get_out_exec.rb /opt/APC/fluentd/lib/
 
-sed -i -e "s/TD_AGENT_USER=td-agent/TD_AGENT_USER=root/g" /etc/init.d/td-agent
-sed -i -e "s/TD_AGENT_GROUP=td-agent/TD_AGENT_GROUP=root/g" /etc/init.d/td-agent
+sed -i -e "s/User=td-agent/User=root/g" /lib/systemd/system/td-agent.service
+sed -i -e "s/Group=td-agent/Group=root/g" /lib/systemd/system/td-agent.service
 
 ### nginx
 cp -p /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.`date '+%Y%m%d'`
@@ -131,7 +132,8 @@ echo `ulimit -n`
 
 # Disable yum update
 
-echo exclude=td-agent* kibana* elasticsearch* nginx* java* >> /etc/yum.conf
+sed -i -e "s/Update-Package-Lists "1"/Update-Package-Lists "0"/g" /etc/apt/apt.conf.d/20auto-upgrades
+sed -i -e "s/Unattended-Upgrade "1"/Unattended-Upgrade "0"/g" /etc/apt/apt.conf.d/20auto-upgrades
 
 # database copy
 echo "====database copy===="
@@ -143,36 +145,6 @@ systemctl start elasticsearch.service
 sleep 180s
 systemctl status elasticsearch.service
 
-## Kibana Settings
-
-ES_PASS=`cat src/install.log | grep "The generated password" | awk '{print $11}'`
-
-systemctl start kibana.service
-sleep 300s
-systemctl status kibana.service
-
-curl -u elastic:$ES_PASS -XPUT 'http://localhost:9200/_snapshot/snapshot'  -H 'Content-Type: application/json' -d '{
-    "type": "fs",
-    "settings": {
-        "location": "/var/lib/APC/backup/",
-        "compress": true
-    }
-}'
-
-curl -u elastic:$ES_PASS -XPOST localhost:9200/_snapshot/snapshot/snapshot_kibana/_restore
-
-echo `src/format.sh`
-wait
-sleep 60s
-
-curl -u elastic:$ES_PASS -X POST "http://localhost:5601/api/saved_objects/_import" -H 'Content-Type: application/json' -H "kbn-xsrf: true" --form file=@src/kibana/export.ndjson
-wait
-echo `src/kibana_setting.sh`
-wait
-
-## Logrotate Settings
-echo `src/ilm_policy.sh`
-
 
 # Auto start
  echo "====Auto start===="
@@ -182,15 +154,10 @@ systemctl enable elasticsearch.service
 systemctl enable kibana.service
 systemctl enable nginx.service
 
-
-systemctl start kibana.service
 systemctl start nginx.service
-systemctl start td-agent.service
 
 systemctl status td-agent.service
 systemctl status elasticsearch.service
-systemctl status kibana.service
-systemctl status nginx.service
 
 date
 echo "**********************"

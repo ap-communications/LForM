@@ -1,15 +1,64 @@
 #! /bin/bash
-PASS=`cat LForM/LForM_install.log | grep "The generated password" | awk '{print $11}'`
+ES_PASS=`cat install.log | grep "The generated password" | awk '{print $11}'`
 
-curl --cacert /etc/kibana/certs/elasticsearch-ca.pem -u elastic:$PASS -XPUT "https://localhost:9200/_template/forti_template_01?pretty" -H 'Content-Type: application/json' -d '
+
+
+curl --cacert /etc/kibana/certs/elasticsearch-ca.pem -u elastic:$ES_PASS -X PUT "https://localhost:5601/api/spaces/space/default" -H 'Content-Type: application/json' -H "kbn-xsrf: reporting"  -d '
+{
+"id": "default",
+"name": "Default",
+"disabledFeatures": ["canvas","maps","ml","enterpriseSearch","logs","infrastructure","graph","apm","uptime","observabilityCases","siem","securitySolutionCases","dev_tools","savedObjectsTagging","osquery","actions","stackAlerts","fleetv2","fleet","monitoring"]
+}
+'
+wait
+
+curl --cacert /etc/kibana/certs/elasticsearch-ca.pem -u elastic:$ES_PASS -X POST "http://localhost:5601/api/saved_objects/_import" -H 'Content-Type: application/json' -H "kbn-xsrf: true" --form file=@src/kibana/export.ndjson
+wait
+
+curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -XPOST "http://localhost:9200/_snapshot/snapshot/snapshot_kibana/_restore"
+
+#
+curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -XPUT "http://localhost:9200/_snapshot/snapshot"  -H 'Content-Type: application/json' -d '{
+    "type": "fs",
+    "settings": {
+        "location": "/var/lib/APC/backup/",
+        "compress": true
+    }
+}'
+
+## Logrotate Settings
+curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -XPUT "https://localhost:9200/_ilm/policy/lform_ilm_policy_001" -H "kbn-xsrf: reporting" -H 'Content-Type: application/json' -d '
+{
+  "policy": {
+    "phases": {
+      "hot": {
+        "actions": {
+          "rollover": {
+            "max_age": "7d",
+            "max_primary_shard_size": "50gb"
+          },
+          "set_priority": {
+            "priority": 100
+          }
+        },
+        "min_age": "0ms"
+      }
+    }
+  }
+}
+'
+wait
+
+
+curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -XPUT "https://localhost:9200/_template/lform_template_01?pretty" -H 'Content-Type: application/json' -d '
 {
   "index_patterns" : ["forti_syslog_*"],
   "settings" : {
     "number_of_shards" : 1,
     "number_of_replicas" : 0,
     "refresh_interval" : "1s",
-    "index.lifecycle.name": "forti_ilm_policy_001",      
-    "index.lifecycle.rollover_alias": "forti_index" 
+    "index.lifecycle.name": "lform_ilm_policy_001",      
+    "index.lifecycle.rollover_alias": "lform_index" 
   },
   "mappings" : {
       "dynamic_templates": [{
@@ -474,5 +523,3 @@ curl --cacert /etc/kibana/certs/elasticsearch-ca.pem -u elastic:$PASS -XPUT "htt
   }
 }
 '
-
-
