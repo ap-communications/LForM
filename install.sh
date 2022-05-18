@@ -120,31 +120,22 @@ cp -p src/nginx/config/.htpasswd /etc/nginx/conf.d/.htpasswd
 
 
 ## ufw check
-
 echo `sudo ufw status`
 
 
 # FileDescriptor Setting
-
-echo `ulimit -n`
 # Default setting for Ubuntu Focal is 1048576
+echo `ulimit -n`
 
 
 # Disable yum update
-
-sed -i -e "s/Update-Package-Lists "1"/Update-Package-Lists "0"/g" /etc/apt/apt.conf.d/20auto-upgrades
-sed -i -e "s/Unattended-Upgrade "1"/Unattended-Upgrade "0"/g" /etc/apt/apt.conf.d/20auto-upgrades
+sed -i -e "s/"1"/"0"/g" /etc/apt/apt.conf.d/20auto-upgrades
 
 # database copy
 echo "====database copy===="
 
 mkdir -p /var/lib/APC/backup
 chown -R elasticsearch:elasticsearch /var/lib/APC/backup/
-
-systemctl start elasticsearch.service
-sleep 180s
-systemctl status elasticsearch.service
-
 
 # Auto start
  echo "====Auto start===="
@@ -153,11 +144,6 @@ systemctl enable td-agent.service
 systemctl enable elasticsearch.service
 systemctl enable kibana.service
 systemctl enable nginx.service
-
-systemctl start nginx.service
-
-systemctl status td-agent.service
-systemctl status elasticsearch.service
 
 date
 echo "**********************"

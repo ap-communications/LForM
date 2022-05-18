@@ -1,8 +1,7 @@
 #! /bin/bash
-ES_PASS=`cat install.log | grep "The generated password" | awk '{print $11}'`
+read -rsp 'Password: ' ES_PASS
 
-
-
+echo "====Space setting===="
 curl --cacert /etc/kibana/certs/elasticsearch-ca.pem -u elastic:$ES_PASS -X PUT "https://localhost:5601/api/spaces/space/default" -H 'Content-Type: application/json' -H "kbn-xsrf: reporting"  -d '
 {
 "id": "default",
@@ -10,15 +9,13 @@ curl --cacert /etc/kibana/certs/elasticsearch-ca.pem -u elastic:$ES_PASS -X PUT 
 "disabledFeatures": ["canvas","maps","ml","enterpriseSearch","logs","infrastructure","graph","apm","uptime","observabilityCases","siem","securitySolutionCases","dev_tools","savedObjectsTagging","osquery","actions","stackAlerts","fleetv2","fleet","monitoring"]
 }
 '
-wait
 
-curl --cacert /etc/kibana/certs/elasticsearch-ca.pem -u elastic:$ES_PASS -X POST "http://localhost:5601/api/saved_objects/_import" -H 'Content-Type: application/json' -H "kbn-xsrf: true" --form file=@src/kibana/export.ndjson
-wait
+echo "====Import objects===="
+curl --cacert /etc/kibana/certs/elasticsearch-ca.pem -u elastic:$ES_PASS -X POST "http://localhost:5601/api/saved_objects/_import?overwrite=true" -H "kbn-xsrf: true" --form file=@src/kibana/export.ndjson
 
-curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -XPOST "http://localhost:9200/_snapshot/snapshot/snapshot_kibana/_restore"
 
-#
-curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -XPUT "http://localhost:9200/_snapshot/snapshot"  -H 'Content-Type: application/json' -d '{
+echo "====Backup repo===="
+curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -XPUT "https://localhost:9200/_snapshot/snapshot?pretty"  -H 'Content-Type: application/json' -d '{
     "type": "fs",
     "settings": {
         "location": "/var/lib/APC/backup/",
@@ -26,8 +23,29 @@ curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -XPUT "http
     }
 }'
 
-## Logrotate Settings
-curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -XPUT "https://localhost:9200/_ilm/policy/lform_ilm_policy_001" -H "kbn-xsrf: reporting" -H 'Content-Type: application/json' -d '
+echo "====Create role===="
+curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -XPOST "https://localhost:9200/_security/role/data_stream?pretty" -H "Content-Type: application/json" -d'
+{
+  "cluster": ["all"],
+  "indices": [
+    {
+      "names": ["*"],
+      "privileges": ["all"]
+    }
+  ]
+}
+'
+
+echo "====Create user===="
+curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -XPOST "https://localhost:9200/_security/user/data_stream_user?pretty" -H "Content-Type: application/json" -d'
+{
+  "password" : "Data_stream_pw",
+  "roles" : [ "data_stream" ]
+}
+'
+
+echo "====Logrotate settings===="
+curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -XPUT "https://localhost:9200/_ilm/policy/forti_ilm_policy_001" -H "kbn-xsrf: reporting" -H 'Content-Type: application/json' -d '
 {
   "policy": {
     "phases": {
@@ -47,18 +65,18 @@ curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -XPUT "ht
   }
 }
 '
-wait
 
 
-curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -XPUT "https://localhost:9200/_template/lform_template_01?pretty" -H 'Content-Type: application/json' -d '
+echo "====Template setting Fortigate===="
+curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -XPUT "https://localhost:9200/_template/forti_template_01?pretty" -H 'Content-Type: application/json' -d '
 {
   "index_patterns" : ["forti_syslog_*"],
   "settings" : {
     "number_of_shards" : 1,
     "number_of_replicas" : 0,
     "refresh_interval" : "1s",
-    "index.lifecycle.name": "lform_ilm_policy_001",      
-    "index.lifecycle.rollover_alias": "lform_index" 
+    "index.lifecycle.name": "forti_ilm_policy_001",      
+    "index.lifecycle.rollover_alias": "forti_syslog" 
   },
   "mappings" : {
       "dynamic_templates": [{

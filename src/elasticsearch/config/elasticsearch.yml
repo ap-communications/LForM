@@ -20,7 +20,7 @@ cluster.name: LForM
 #
 # Use a descriptive name for the node:
 #
-node.name: LForM_node1
+node.name: es_node1
 #
 # Add custom attributes to the node:
 #
