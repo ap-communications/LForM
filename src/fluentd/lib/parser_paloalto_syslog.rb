@@ -253,8 +253,7 @@ module Fluent
         "characteristic_of_app" => "@#106",
         "container_of_app" => "@#107",
         "is_saas_of_app" => "@#108",
-        "sanctioned_state_of_app" => "@#109",
-        "subcategory_of_app" => "@#110"
+        "sanctioned_state_of_app" => "@#109"
         }
 
         field_hash_globalprotect ={
@@ -290,15 +289,13 @@ module Fluent
         "connect_method" => "@031",
         "error_code" => "@032",
         "portal" => "@033",
-        "seqno" => "@034",
-        "actionflags" => "@035",
-        "selection_type" => "@036",
-        "response_time" => "@037",
-        "priority" => "@038",
-        "gateway" => "@040",
-        "vsys_name" => "@042",
-        "device_name" => "@043",
-        "vsys_id" => "@044"
+        "selection_type" => "@034",
+        "response_time" => "@035",
+        "priority" => "@036",
+        "gateway" => "@037",
+        "vsys_name" => "@038",
+        "device_name" => "@039",
+        "vsys_id" => "@040"
 
         }
 

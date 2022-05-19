@@ -2,7 +2,7 @@
 read -rsp 'Password: ' ES_PASS
 
 echo "====Space setting===="
-curl --cacert /etc/kibana/certs/elasticsearch-ca.pem -u elastic:$ES_PASS -X PUT "https://localhost:5601/api/spaces/space/default" -H 'Content-Type: application/json' -H "kbn-xsrf: reporting"  -d '
+curl --cacert /etc/kibana/certs/elasticsearch-ca.pem -u elastic:$ES_PASS -X PUT "http://localhost:5601/api/spaces/space/default" -H 'Content-Type: application/json' -H "kbn-xsrf: reporting"  -d '
 {
 "id": "default",
 "name": "Default",
@@ -52,7 +52,7 @@ curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -XPUT "ht
       "hot": {
         "actions": {
           "rollover": {
-            "max_age": "7d",
+            "max_age": "30d",
             "max_primary_shard_size": "50gb"
           },
           "set_priority": {
@@ -73,7 +73,28 @@ curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -XPUT "ht
       "hot": {
         "actions": {
           "rollover": {
-            "max_age": "7d",
+            "max_age": "30d",
+            "max_primary_shard_size": "50gb"
+          },
+          "set_priority": {
+            "priority": 100
+          }
+        },
+        "min_age": "0ms"
+      }
+    }
+  }
+}
+'
+
+curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -XPUT "https://localhost:9200/_ilm/policy/nozomi_ilm_policy_001" -H "kbn-xsrf: reporting" -H 'Content-Type: application/json' -d '
+{
+  "policy": {
+    "phases": {
+      "hot": {
+        "actions": {
+          "rollover": {
+            "max_age": "30d",
             "max_primary_shard_size": "50gb"
           },
           "set_priority": {
@@ -750,3 +771,88 @@ curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -XPUT "http
   }
 }
 '
+
+echo "====Template setting Nozomi===="
+curl --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -XPUT "https://localhost:9200/_template/nozomi_template_01?pretty" -H 'Content-Type: application/json' -d '
+ {
+   "index_patterns" : ["nozomi_syslog_*"],
+   "settings" : {
+     "number_of_shards" : 1,
+     "number_of_replicas" : 0,
+     "refresh_interval" : "1s",
+     "index.lifecycle.name": "nozomi_ilm_policy_001",      
+    "index.lifecycle.rollover_alias": "nozomi_syslog" 
+   },
+   "mappings" : {
+     "dynamic_templates": [{
+       "defaultmapping_notanalyzed": {
+         "match": "*",
+         "match_mapping_type": "string",
+         "mapping": {"type": "keyword", "index": "false"}
+       }
+     }],
+     "properties": {  
+       "receive_time": {"type":"date","format":"strict_date_optional_time||epoch_second"},
+       "time_generated": {"type":"date","format":"strict_date_optional_time||epoch_millis"},   
+       "hostname": {"type":"keyword","index":"true"},
+       "event": {"type":"keyword","index":"true"},
+       "cef_version": {"type":"integer","index":"true"},
+       "vender": {"type":"keyword","index":"true"},
+       "product": {"type":"keyword","index":"true"},
+       "osverson": {"type":"keyword","index":"true"},
+       "type": {"type":"keyword","index":"true"},
+       "subtype": {"type":"keyword","index":"true"},
+       "title": {"type":"keyword","index":"true"},
+       "severity": {"type":"integer","index":"true"},
+       "app": {"type":"keyword","index":"true"},
+       "dvc": {"type":"ip","index":"true"},
+       "dvchost": {"type":"keyword","index":"true"},
+       "risk": {"type":"float","index":"true"},
+       "is_security": {"type":"keyword","index":"true"},
+       "event_id": {"type":"keyword","index":"true"},
+       "parents": {
+         "type":"text",
+         "index":"true",
+         "fields": {
+           "parent": {
+             "type": "keyword",
+             "index":"true",
+             "ignore_above": 1024
+           }
+         }},
+       "schema_version": {"type":"keyword","index":"true"},
+       "dst": {"type":"ip","index":"true"},
+       "dst_host": {"type":"keyword","index":"true"},
+       "dst_mac": {"type":"keyword","index":"true"},
+       "dport": {"type":"keyword","index":"true"},
+       "msgs": {
+         "type": "text",
+         "index":"true",
+         "fields": {
+           "msg": {
+             "type": "keyword",
+             "index":"true",
+             "ignore_above": 1024
+           }
+         }},
+       "src": {"type":"ip","index":"true"},
+       "src_mac": {"type":"keyword","index":"true"},
+       "sport": {"type":"keyword","index":"true"},
+       "proto": {"type":"keyword","index":"true"},
+       "suser": {"type":"keyword","index":"true"},
+       "browser": {"type":"keyword","index":"true"},
+       "cs1Label": {"type":"keyword","index":"true"},
+       "cs2Label": {"type":"keyword","index":"true"},
+       "cs3Label": {"type":"keyword","index":"true"},
+       "cs5Label": {"type":"keyword","index":"true"},
+       "cs6Label": {"type":"keyword","index":"true"},
+       "flexString1": {"type":"keyword","index":"true"},
+       "flexString2": {"type":"keyword","index":"true"},
+       "flexString3": {"type":"keyword","index":"true"},
+       "flexString1Label": {"type":"keyword","index":"true"},
+       "flexString2Label": {"type":"keyword","index":"true"},
+       "flexString3Label": {"type":"keyword","index":"true"}
+     }
+   }
+ }
+ '

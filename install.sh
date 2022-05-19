@@ -96,7 +96,7 @@ cp -pf src/kibana/template.js /usr/share/kibana/src/core/server/rendering/views/
 echo `src/elasticsearch/jvmoptions_set.sh`
 wait
 
-cp /etc/elasticsearch/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml.`date '+%Y%m%d'
+cp /etc/elasticsearch/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml.`date '+%Y%m%d'`
 cp -pf src/elasticsearch/config/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 chown elasticsearch:elasticsearch /etc/elasticsearch/elasticsearch.yml
 chown elasticsearch:elasticsearch /var/log/elasticsearch/
@@ -105,7 +105,7 @@ chown elasticsearch:elasticsearch /var/lib/elasticsearch/
 ### Fluentd
 \cp -pf src/fluentd/config/td-agent.conf /etc/td-agent/td-agent.conf
 \cp -pf src/fluentd/lib/parser_fortigate_syslog.rb /etc/td-agent/plugin/parser_fortigate_syslog.rb
-\cp -pf src/fluentd/lib/snmp_get_out_exec.rb /opt/APC/fluentd/lib/
+\cp -pf src/fluentd/lib/parser_paloalto_syslog.rb /etc/td-agent/plugin/parser_paloalto_syslog.rb
 
 sed -i -e "s/User=td-agent/User=root/g" /lib/systemd/system/td-agent.service
 sed -i -e "s/Group=td-agent/Group=root/g" /lib/systemd/system/td-agent.service

@@ -13,7 +13,6 @@ curl --cacert /etc/elasticsearch/certs/ca/ca.crt  -u elastic:$ES_PASS -H "Conten
 systemctl start kibana.service
 sleep 120
 
-systemctl status nginx.service
 systemctl status td-agent.service
 systemctl status elasticsearch.service
 systemctl status kibana.service
