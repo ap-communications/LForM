@@ -63,17 +63,6 @@ td-agent-gem install elasticsearch -v $gem_elastic_version
 td-agent-gem install fluent-plugin-elasticsearch -v $gem_fluent_elastic_version
  
  
-## nginx
-echo "====nginx===="
-
-curl -fsSL https://nginx.org/keys/nginx_signing.key | sudo apt-key add -
-
-cat <<EOF> /etc/apt/sources.list.d/nginx.list
-deb https://nginx.org/packages/ubuntu/ focal nginx 
-deb-src https://nginx.org/packages/ubuntu/ focal nginx
-EOF
-
-sudo apt -y install nginx=$nginx_version
 
 ## Setting file copy
 echo "====Setting file copy===="
