@@ -75,7 +75,7 @@ logging:
   appenders:
     file:
       type: file
-      fileName: /var/log/kibana/LForM_kibana_log/kibana.log
+      fileName: /var/log/kibana/APC_kibana_log/kibana.log
       layout:
         type: pattern
   root:
@@ -97,7 +97,7 @@ server.publicBaseUrl: "https://localhost:5601"
 
 elasticsearch.hosts:  [ "https://localhost:9200" ]
 elasticsearch.username: "kibana_system"
-elasticsearch.password: "lform"
+elasticsearch.password: "kibana_pw"
 elasticsearch.ssl.verificationMode: full
 elasticsearch.ssl.certificateAuthorities: [ "/etc/kibana/certs/elasticsearch-ca.pem" ]
 

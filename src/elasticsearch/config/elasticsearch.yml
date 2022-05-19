@@ -20,7 +20,7 @@ cluster.name: LForM
 #
 # Use a descriptive name for the node:
 #
-node.name: LForM_node1
+node.name: es_node1
 #
 # Add custom attributes to the node:
 #
@@ -113,14 +113,14 @@ path.logs: /var/log/elasticsearch
 xpack.security.enabled: true
 xpack.security.http.ssl:
   enabled: true
-  keystore.path: /etc/elasticsearch/certs/LForM_node1-http.p12
+  keystore.path: /etc/elasticsearch/certs/node1-http.p12
   #client_authentication: optional
 
 # Enable encryption and mutual authentication between cluster nodes
 xpack.security.transport.ssl:
   enabled: true
   verification_mode: certificate
-  keystore.path: /etc/elasticsearch/certs/LForM-node-certificates.p12
+  keystore.path: /etc/elasticsearch/certs/node-certificates.p12
   truststore.path: /etc/elasticsearch/certs/transport.p12
   #keystore.path: /etc/elasticsearch/certs/elastic-certificates.p12
   #truststore.path: /etc/elasticsearch/certs/elastic-certificates.p12
