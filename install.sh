@@ -29,7 +29,7 @@ source /root/.bash_profile
 
 cp -p /etc/rsyslog.conf /etc/rsyslog.conf.`date '+%Y%m%d'`
 \cp -f /etc/rsyslog.d/50-default.conf /etc/rsyslog.d/50-default.conf.`date '+%Y%m%d'`
-\cp -f LForM/system/50-default.conf /etc/rsyslog.d/50-default.conf
+\cp -f src/system/50-default.conf /etc/rsyslog.d/50-default.conf
 systemctl restart rsyslog
 
 
