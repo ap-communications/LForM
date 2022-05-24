@@ -19,16 +19,17 @@ gem_fluent_elastic_version="5.1.4"
 echo "====Preparation===="
 
 mkdir /var/log/APC
+chown syslog:adm /var/log/APC
+chmod 755 /var/log/APC
 mkdir -p /opt/APC/fluentd/lib
 mkdir -p /opt/APC/elasticsearch
 mkdir /var/lib/fluentd_buffer
 mkdir -p /var/log/kibana
 
-source /root/.bash_profile
-
 
 cp -p /etc/rsyslog.conf /etc/rsyslog.conf.`date '+%Y%m%d'`
 \cp -f /etc/rsyslog.d/50-default.conf /etc/rsyslog.d/50-default.conf.`date '+%Y%m%d'`
+\cp -f src/system/rsyslog.conf /etc/rsyslog.conf
 \cp -f src/system/50-default.conf /etc/rsyslog.d/50-default.conf
 systemctl restart rsyslog
 
@@ -95,6 +96,7 @@ chown elasticsearch:elasticsearch /var/lib/elasticsearch/
 \cp -pf src/fluentd/config/td-agent.conf /etc/td-agent/td-agent.conf
 \cp -pf src/fluentd/lib/parser_fortigate_syslog.rb /etc/td-agent/plugin/parser_fortigate_syslog.rb
 \cp -pf src/fluentd/lib/parser_paloalto_syslog.rb /etc/td-agent/plugin/parser_paloalto_syslog.rb
+\cp -pf src/fluentd/lib/parser_nozomi_syslog.rb /etc/td-agent/plugin/parser_nozomi_syslog.rb
 
 sed -i -e "s/User=td-agent/User=root/g" /lib/systemd/system/td-agent.service
 sed -i -e "s/Group=td-agent/Group=root/g" /lib/systemd/system/td-agent.service

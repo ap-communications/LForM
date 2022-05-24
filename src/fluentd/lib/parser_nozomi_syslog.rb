@@ -46,7 +46,9 @@ module Fluent
         record_value["title"] = cef_value[7] #High rate of outbound connections
         record_value["severity"] = cef_value[8] #9
 
-        syslog_value = cef_value[9].scan(/flex[\w\d]+=[[\w\d]\s]+(?=\sflex)|msg=[[\w\d!#$%&'()-=^~|@`\[{;+:*\]},]\s]+(?=\ssrc)|\w+=\[\"?[\w+!#$%&'()-=^~|@`\[{;+:*\]},]*\"?\]|\w+=\[\"[[\w+-][\",\s]]*\]|\w+=[\w+!#$%&'()-=^~|@`\[{;+:*\]},<\.>\/?\\_]+|\w+=\"[\w+\s+!#$%&'()-=^~|@`\[{;+:*\]},]*/)
+        puts cef_value
+
+        syslog_value = cef_value[9].scan(/flex[\w\d]+=[[\w\d]\s]+(?=\sflex)|msg=[[\w\d!#$%&'()-=^~|@`\[{;+:*\]},]\s]+(?=\ssrc)?|\w+=\[\"?[\w+!#$%&'()-=^~|@`\[{;+:*\]},]*\"?\]|\w+=\[\"[[\w+-][\",\s]]*\]|\w+=[\w+!#$%&'()-=^~|@`\[{;+:*\]},<\.>\/?\\_]+|\w+=\"[\w+\s+!#$%&'()-=^~|@`\[{;+:*\]},]*/)
     
         syslog_value.each{|value|
         record = value.split("=")
@@ -91,6 +93,10 @@ module Fluent
     
     when record_value["type"] == "AUDIT"
         tag = "syslog_audit.nozomi"
+
+    when record_value["type"] == "HEALTH"
+    tag = "syslog_health.nozomi"
+    
     end
 
     time = Engine.now
@@ -197,8 +203,8 @@ module Fluent
       index = "nozomi_syslog_log_001_sign-#{today.strftime('%Y%m%d')}"
       prev_index = "nozomi_syslog_log_001_sign-#{(today-1).strftime('%Y%m%d')}"
 
-      res_doc = client.search(index: index, body: {query: {match: {event_id: event_id}}})
-      if res_doc["hits"]["total"]["value"] != 0
+      res_doc = client.search(index: index, body: {query: {match: {event_id: incident_id}}})
+      if res_doc["hits"]["total"]["value" ] != 0
         parents = res_doc["hits"]["hits"][0]["_source"]["parents"]
         if parents == "[]"
             id = res_doc["hits"]["hits"][0]["_id"]
