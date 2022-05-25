@@ -44,6 +44,14 @@ module Fluent
           when "time" then
             datetime = date.concat(" " + v)
             next
+          when "eventtime" then
+            eventtime = v.to_s
+            epoch_sec = 10
+            if eventtime.to_s.length > epoch_sec
+              num_gap = eventtime.length - epoch_sec
+              eventtime.slice!(10, num_gap)
+              v = eventtime
+            end
         end
         record_value["#{k}"] = (v == nil || v == "") ? nil : v.tr("\"","")
       }
