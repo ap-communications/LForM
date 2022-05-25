@@ -101,7 +101,7 @@ elasticsearch.password: "kibana_pw"
 elasticsearch.ssl.verificationMode: full
 elasticsearch.ssl.certificateAuthorities: [ "/etc/kibana/certs/elasticsearch-ca.pem" ]
 
-
+#i18n.locale: ja-JP
 
 # =================== Search Autocomplete ===================
 # Time in milliseconds to wait for autocomplete suggestions from Elasticsearch.
