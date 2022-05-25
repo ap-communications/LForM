@@ -43,13 +43,20 @@ module Fluent
         record_value["product"] = cef_value[3] #N2OS
         record_value["osverson"] = cef_value[4] #21.8.0-12061235_00473
         record_value["type"] = cef_value[5] #SIGN
-        record_value["subtype"] = cef_value[6] #OUTBOUND-CONNECTIONS
-        record_value["title"] = cef_value[7] #High rate of outbound connections
-        record_value["severity"] = cef_value[8] #9
 
-        syslog_value = cef_value[9].scan(/flex[\w\d]+=[[\w\d]\s]+(?=\sflex)|msg=[[\w\d!#$%&'()-=^~|@`\[{;+:*\]},]\s]+(?=\ssrc)|msg=[[\w\d!#$%&'()-=^~|@`\[{;+:*\]},]\s]+\z|\w+=\[\"?[\w+!#$%&'()-=^~|@`\[{;+:*\]},]*\"?\]|\w+=\[\"[[\w+-][\",\s]]*\]|\w+=[\w+!#$%&'()-=^~|@`\[{;+:*\]},<\.>\/?\\_]+|\w+=\"[\w+\s+!#$%&'()-=^~|@`\[{;+:*\]},]*/)
+        if record_value["type"] == "HEALTH" #HEALTHにはサブタイプがない
+          record_value["title"] = cef_value[6] #High rate of outbound connections
+          record_value["severity"] = cef_value[7] #9
+          syslog_value = cef_value[8].scan(/flex[\w\d]+=[[\w\d]\s]+(?=\sflex)|msg=[[\w\d!#$%&'()-=^~|@`\[{;+:*\]},]\s]+(?=\ssrc)|msg=[[\w\d!#$%&'()-=^~|@`\[{;+:*\]},]\s]+\z|\w+=\[\"?[\w+!#$%&'()-=^~|@`\[{;+:*\]},]*\"?\]|\w+=\[\"[[\w+-][\",\s]]*\]|\w+=[\w+!#$%&'()-=^~|@`\[{;+:*\]},<\.>\/?\\_]+|\w+=\"[\w+\s+!#$%&'()-=^~|@`\[{;+:*\]},]*/)
+        else
+          record_value["subtype"] = cef_value[6] #OUTBOUND-CONNECTIONS
+          record_value["title"] = cef_value[7] #High rate of outbound connections
+          record_value["severity"] = cef_value[8] #9
+          syslog_value = cef_value[9].scan(/flex[\w\d]+=[[\w\d]\s]+(?=\sflex)|msg=[[\w\d!#$%&'()-=^~|@`\[{;+:*\]},]\s]+(?=\ssrc)|msg=[[\w\d!#$%&'()-=^~|@`\[{;+:*\]},]\s]+\z|\w+=\[\"?[\w+!#$%&'()-=^~|@`\[{;+:*\]},]*\"?\]|\w+=\[\"[[\w+-][\",\s]]*\]|\w+=[\w+!#$%&'()-=^~|@`\[{;+:*\]},<\.>\/?\\_]+|\w+=\"[\w+\s+!#$%&'()-=^~|@`\[{;+:*\]},]*/)
+        end
+
         syslog_value.each{|log|
-            key, value = log.split("=")
+          key, value = log.split("=")
         case
         when key =~ /.*Label/
           #keyがflexstringLabelだった場合、valueをkeyとして、flexstringの要素を新たに追加する。
