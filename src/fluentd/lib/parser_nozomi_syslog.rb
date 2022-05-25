@@ -31,12 +31,13 @@ module Fluent
 
     def parse(text)
         record_value = {}
-        sp_value = text.split(/\A(\w{3}\s+\d{1,2}\s\d{2}:\d{2}:\d{2})\s(.*)\s(n2osevents\[0\]):\sCEF:/)
+        sp_value = text.split(/\A(\w{3}\s+\d{1,2}\s\d{2}:\d{2}:\d{2})\s(.*)\s(.*):\sCEF:/)
         record_value["receive_time"] = convert_date_to_epoch(sp_value[1]) #Feb 20 18:29:26
         record_value["hostname"] = sp_value[2] #nozomi-n2os.local
         record_value["event"] = sp_value[3] #n2osevents[0]
 
-        cef_value = sp_value[4].split(/\A(\d)\|(.*\s?)\|(N2OS)\|(.*)\|(.*):(.*[:-].*)\|(.*\s?)\|(\d{1,2})\|(.*)/) 
+        #cef_value = sp_value[4].split(/\A(\d)\|(.*\s?)\|(N2OS)\|(.*)\|(.*):(.*[:-].*)\|(.*\s?)\|(\d{1,2})\|(.*)/)
+        cef_value = sp_value[4].split(/(.*)\|(.*)\|(.*)\|(.*)\|(.*):(.*[:-].*)\|(.*)\|(.*)\|(.*)|(.*)\|(.*)\|(.*)\|(.*)\|(.*)\|(.*)\|(.*)\|(.*)/)
         record_value["cef_version"] = cef_value[1] #0
         record_value["vender"] = cef_value[2] #Nozomi Networks
         record_value["product"] = cef_value[3] #N2OS
@@ -46,37 +47,24 @@ module Fluent
         record_value["title"] = cef_value[7] #High rate of outbound connections
         record_value["severity"] = cef_value[8] #9
 
-        puts cef_value
-
-        syslog_value = cef_value[9].scan(/flex[\w\d]+=[[\w\d]\s]+(?=\sflex)|msg=[[\w\d!#$%&'()-=^~|@`\[{;+:*\]},]\s]+(?=\ssrc)?|\w+=\[\"?[\w+!#$%&'()-=^~|@`\[{;+:*\]},]*\"?\]|\w+=\[\"[[\w+-][\",\s]]*\]|\w+=[\w+!#$%&'()-=^~|@`\[{;+:*\]},<\.>\/?\\_]+|\w+=\"[\w+\s+!#$%&'()-=^~|@`\[{;+:*\]},]*/)
-    
-        syslog_value.each{|value|
-        record = value.split("=")
-        k, v = value.split("=")
-        record_value["#{k}"] = (v == nil || v == "") ? nil : v.tr("\"","")
-    }
-
+        syslog_value = cef_value[9].scan(/flex[\w\d]+=[[\w\d]\s]+(?=\sflex)|msg=[[\w\d!#$%&'()-=^~|@`\[{;+:*\]},]\s]+(?=\ssrc)|msg=[[\w\d!#$%&'()-=^~|@`\[{;+:*\]},]\s]+\z|\w+=\[\"?[\w+!#$%&'()-=^~|@`\[{;+:*\]},]*\"?\]|\w+=\[\"[[\w+-][\",\s]]*\]|\w+=[\w+!#$%&'()-=^~|@`\[{;+:*\]},<\.>\/?\\_]+|\w+=\"[\w+\s+!#$%&'()-=^~|@`\[{;+:*\]},]*/)
         syslog_value.each{|log|
             key, value = log.split("=")
         case
         when key =~ /.*Label/
-        #keyがflexstringLabelだった場合、valueをkeyとして、flexstringの要素を新たに追加する。
-        #その際に元々のflexstringの要素を削除する
-        new_key = is_convert_key?("#{value}".downcase)
-        key = key.gsub!(/Label/, "")
-        new_value = is_value_exception?(new_key, record_value["#{key}"])
-        record_value["#{new_key}"] = is_nil?(new_value)
-        record_value.delete("#{key}")
-        #record_value["#{new_key}"] = (value == nil || value == "") ? nil : record_value.delete("#{key}".gsub(/Label/, ""))
+          #keyがflexstringLabelだった場合、valueをkeyとして、flexstringの要素を新たに追加する。
+          #その際に元々のflexstringの要素を削除する
+          new_key = is_convert_key?("#{value}".downcase)
+          key = key.gsub!(/Label/, "")
+          new_value = is_value_exception?(new_key, record_value["#{key}"])
+          record_value["#{new_key}"] = is_nil?(new_value)
+          record_value.delete("#{key}")
         else
-        new_key = is_convert_key?(key)
-        new_value = is_value_exception?(new_key, value)
-        #record_value["#{new_key}"] = value
-        record_value["#{new_key}"] = is_nil?(new_value)
+          new_key = is_convert_key?(key)
+          new_value = is_value_exception?(new_key, value)
+          record_value["#{new_key}"] = is_nil?(new_value)
         end
     }
-
-    puts(record_value)
     
     case
     when record_value["type"] == "SIGN"
@@ -104,7 +92,7 @@ module Fluent
     end
   
     def is_nil?(value)
-    return value = (value == nil || value == "") ? nil : value
+      return value = (value == nil || value == "") ? nil : value
     end
     
     def is_value_exception?(key, value)
@@ -208,7 +196,6 @@ module Fluent
         parents = res_doc["hits"]["hits"][0]["_source"]["parents"]
         if parents == "[]"
             id = res_doc["hits"]["hits"][0]["_id"]
-            puts(id)
             client.update(index: index, id: id, body: { doc: { parents: incident_id } })
             puts("updated es documents #{id}")
         end
