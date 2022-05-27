@@ -105,7 +105,7 @@ path.logs: /var/log/elasticsearch
 # ---------------------------------- Snapshot -----------------------------------
 #
 
-#path.repo: ["/var/lib/LForM/backup/"]
+path.repo: ["/var/lib/APC/backup/"]
 
 # ---------------------------------- Queue size -----------------------------------
 #
