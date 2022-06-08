@@ -15,6 +15,11 @@ module Fluent
         tag = ""
     end
 
+    desc "Setting Timezone"
+    config_param :palo_time_zone, :integer, default: 0
+
+    ENV['TZ'] = "UTC"
+
     def configure(conf)
         super
     end
@@ -24,8 +29,8 @@ module Fluent
 
         raise "ERR001:syslog format error(no syslog value)" if syslog_value[1].nil?
 
-        if %r{@#000:\s?\"os([89]|1[0]).[01]\"} === syslog_value[1]\
-        || %r{@000:\s?\"os([89]|1[0]).[01]\"} === syslog_value[1] then
+        if %r{@#000:\s?\"os([89]|1[0]).[012]\"} === syslog_value[1]\
+        || %r{@000:\s?\"os([89]|1[0]).[012]\"} === syslog_value[1] then
 
         logemit(syslog_value)
 
@@ -38,7 +43,6 @@ module Fluent
 
 
     def logemit(syslog_value)
-
         record_value = {}
 
         field_hash_threat ={
@@ -107,50 +111,50 @@ module Fluent
         "payload_protocol_id" => "@068",
         "http_headers" => "@069",
         "url_category" => "@070",
-        "url_category_risk" => "@071",
-        "rule_uuid" => "@072",
-        "http2_connection" => "@073",
-        "dynamic_usergroup_name" => "@074",
-        "xff_ip" => "@075",
-        "src_category" => "@076",
-        "src_profile" => "@077",
-        "src_model" => "@078",
-        "src_vendor" => "@079",
-        "src_osfamily" => "@080",
-        "src_osversion" => "@081",
-        "src_host" => "@082",
-        "src_mac" => "@083",
-        "dst_category" => "@084",
-        "dst_profile" => "@085",
-        "dst_model" => "@086",
-        "dst_vendor" => "@087",
-        "dst_osfamily" => "@088",
-        "dst_osversion" => "@089",
-        "dst_host" => "@090",
-        "dst_mac" => "@091",
-        "container_id" => "@092",
-        "pod_namespace" => "@093",
-        "pod_name" => "@094",
-        "src_edl" => "@095",
-        "dst_edl" => "@096",
-        "hostid" => "@097",
-        "serialnumber" => "@098",
-        "domain_edl" => "@099",
-        "src_dag" => "@100",
-        "dst_dag" => "@101",
-        "partial_hash" => "@102",
-        "high_res_timestamp" => "@103",
-        "reason" => "@104",
-        "justification" => "105",
-        "nssai_sst" => "@106",
-        "subcategory_of_app" => "@107",
-        "category_of_app" => "@108",
-        "technology_of_app" => "@109",
-        "risk_of_app" => "@110",
-        "characteristic_of_app" => "@111",
-        "container_of_app" => "@112",
-        "is_saas_of_app" => "@113",
-        "sanctioned_state_of_app" => "@114"
+        "rule_uuid" => "@071",
+        "http2_connection" => "@072",
+        "dynamic_usergroup_name" => "@073",
+        "xff_ip" => "@074",
+        "src_category" => "@075",
+        "src_profile" => "@076",
+        "src_model" => "@077",
+        "src_vendor" => "@078",
+        "src_osfamily" => "@079",
+        "src_osversion" => "@080",
+        "src_host" => "@081",
+        "src_mac" => "@082",
+        "dst_category" => "@083",
+        "dst_profile" => "@084",
+        "dst_model" => "@085",
+        "dst_vendor" => "@086",
+        "dst_osfamily" => "@087",
+        "dst_osversion" => "@088",
+        "dst_host" => "@089",
+        "dst_mac" => "@090",
+        "container_id" => "@091",
+        "pod_namespace" => "@092",
+        "pod_name" => "@093",
+        "src_edl" => "@094",
+        "dst_edl" => "@095",
+        "hostid" => "@096",
+        "serialnumber" => "@097",
+        "domain_edl" => "@098",
+        "src_dag" => "@099",
+        "dst_dag" => "@100",
+        "partial_hash" => "@101",
+        "high_res_timestamp" => "@102",
+        "reason" => "@103",
+        "justification" => "104",
+        "nssai_sst" => "@105",
+        "subcategory_of_app" => "@106",
+        "category_of_app" => "@107",
+        "technology_of_app" => "@108",
+        "risk_of_app" => "@109",
+        "characteristic_of_app" => "@110",
+        "container_of_app" => "@111",
+        "is_saas_of_app" => "@112",
+        "sanctioned_state_of_app" => "@113",
+        "cloud_reportid" => "@114"
         }
 
         field_hash_traffic = {
@@ -244,8 +248,8 @@ module Fluent
         "dst_dag" => "@#097",
         "session_owner" => "@#098",
         "high_res_timestamp" => "@#099",
-        "nsdsai_sst" => "@#100",
-        "nsdsai_sd" => "@#101",
+        "nssai_sst" => "@#100",
+        "nssai_sd" => "@#101",
         "subcategory_of_app" => "@#102",
         "category_of_app" => "@#103",
         "technology_of_app" => "@#104",
@@ -253,7 +257,8 @@ module Fluent
         "characteristic_of_app" => "@#106",
         "container_of_app" => "@#107",
         "is_saas_of_app" => "@#108",
-        "sanctioned_state_of_app" => "@#109"
+        "sanctioned_state_of_app" => "@#109",
+        "offloaded" => "@#110"
         }
 
         field_hash_globalprotect ={
@@ -282,20 +287,22 @@ module Fluent
         "client_os_ver" => "@024",
         "repeatcnt" => "@025",
         "reason" => "@026",
-        "opaque" => "@027",
-        "status" => "@028",
-        "location" => "@029",
-        "login_duration" => "@030",
-        "connect_method" => "@031",
-        "error_code" => "@032",
-        "portal" => "@033",
-        "selection_type" => "@034",
-        "response_time" => "@035",
-        "priority" => "@036",
-        "gateway" => "@037",
-        "vsys_name" => "@038",
-        "device_name" => "@039",
-        "vsys_id" => "@040"
+        "error" => "@027",
+        "opaque" => "@028",
+        "status" => "@029",
+        "location" => "@030",
+        "login_duration" => "@031",
+        "connect_method" => "@032",
+        "error_code" => "@033",
+        "portal" => "@034",
+        "selection_type" => "@035",
+        "response_time" => "@036",
+        "priority" => "@037",
+        "attempted_gateways" => "@038",
+        "gateway" => "@039",
+        "vsys_name" => "@040",
+        "device_name" => "@041",
+        "vsys_id" => "@042",
 
         }
 
@@ -320,8 +327,8 @@ module Fluent
                     #referer
                     when "@050" then  exception_handling(syslog_value[1],value,"@051")
                     #url_category_list
-                    when "@070" then  perse_category_list(syslog_value[1],value,"@070","@072") if syslog_value[1].include?("@070")
-                    when "@071" then  perse_category_list(syslog_value[1],value,"@070","@072") if syslog_value[1].include?("@071")
+                    #when "@070" then  perse_category_list(syslog_value[1],value,"@070","@072") if syslog_value[1].include?("@070")
+                    #when "@071" then  perse_category_list(syslog_value[1],value,"@070","@072") if syslog_value[1].include?("@071")
                     when value then  syslog_value[1].match(%r{#{value}:\s*"(.*?)"})
                 end
 
@@ -447,7 +454,8 @@ module Fluent
 
     def time_transformation(syslog_time)
         require 'time'
-        Time.parse(syslog_time).to_i
+        t = Time.parse(syslog_time) + (palo_time_zone * -3600)
+        t.to_i
     end
 
     #正規表現での抽出で例外が発生する可能性があるフィールドは例外処理をする
