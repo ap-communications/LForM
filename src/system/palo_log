@@ -1,4 +1,4 @@
-/var/log/LForM_cron/*.log {
+/var/log/APC/palo.log {
   compress
   missingok
   notifempty

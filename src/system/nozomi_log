@@ -1,9 +1,9 @@
-/var/log/LForM/LForM_local6_forti.log {
+/var/log/APC/nozomi.log {
   compress
   missingok
   notifempty
   daily
-  rotate 30 
+  rotate 31 
   postrotate
      /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
   endscript
