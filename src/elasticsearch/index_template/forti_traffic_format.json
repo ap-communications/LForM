@@ -1,9 +1,13 @@
 {
   "template": {
     "settings": {
-      "number_of_shards": 1,
-      "number_of_replicas": 0,
-      "refresh_interval": "1s"
+      "index": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "refresh_interval": "1s",
+        "lifecycle.name": "forti_traffic_policy_001",
+        "lifecycle.rollover_alias": "forti_syslog-traffic" 
+      }
     },
     "mappings": {
       "dynamic": true,
@@ -1392,7 +1396,7 @@
     }
   },
   "index_patterns": [
-    "forti_syslog*"
+    "forti_syslog-traffic*"
   ],
   "_meta": {
     "template_version": "2.0.0"

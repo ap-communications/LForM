@@ -2,12 +2,21 @@
   "template": {
     "settings": {
       "index": {
-        "number_of_shards": "1",
-        "number_of_replicas": "0",
-        "refresh_interval": "1s"
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "refresh_interval": "1s",
+        "lifecycle.name": "nozomi_vi_policy_001",
+        "lifecycle.rollover_alias": "nozomi_syslog-vi" 
       }
     },
     "mappings": {
+      "dynamic": true,
+      "numeric_detection": false,
+      "date_detection": true,
+      "dynamic_date_formats": [
+        "strict_date_optional_time",
+        "yyyy/MM/dd HH:mm:ss Z||yyyy/MM/dd Z"
+      ],
       "_source": {
         "enabled": true,
         "includes": [],
@@ -16,21 +25,13 @@
       "_routing": {
         "required": false
       },
-      "dynamic": true,
-      "numeric_detection": false,
-      "date_detection": true,
-      "dynamic_date_formats": [
-        "strict_date_optional_time",
-        "yyyy/MM/dd HH:mm:ss Z||yyyy/MM/dd Z"
-      ],
       "dynamic_templates": [
         {
           "defaultmapping_notanalyzed": {
             "match": "*",
             "match_mapping_type": "string",
             "mapping": {
-              "type": "keyword",
-              "index": "false"
+              "type": "keyword"
             }
           }
         }
@@ -180,7 +181,7 @@
     }
   },
   "index_patterns": [
-    "nozomi_syslog*"
+    "nozomi_syslog-vi*"
   ],
   "_meta": {
     "template_version": "2.0.0"
