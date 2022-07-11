@@ -540,7 +540,7 @@
     }
   },
   "index_patterns": [
-    "palo_syslog-traffic*"
+    "palo_syslog-globalprotect*"
   ],
   "_meta": {
     "template_version": "2.0.0"
