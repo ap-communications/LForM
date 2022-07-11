@@ -88,7 +88,7 @@ curl -X PUT "https://localhost:9200/forti_syslog-traffic-000001?pretty"  --cacer
 curl -X PUT "https://localhost:9200/forti_syslog-security-000001?pretty" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -H 'Content-Type: application/json' -d'
 {
   "aliases": {
-    "forti_syslog-threat": {
+    "forti_syslog-security": {
       "is_write_index": true
     }
   }
