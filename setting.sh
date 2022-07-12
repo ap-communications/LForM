@@ -46,18 +46,18 @@ curl -XPOST "https://localhost:9200/_security/user/data_stream_user?pretty" --ca
 
 echo "====ILM settings===="
 #Forti
-curl --data @src/elasticsearch/ilm_policy/forti_traffic_policy.json -XPUT "https://localhost:9200/_ilm/policy/forti_traffic_policy_001" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
-curl --data @src/elasticsearch/ilm_policy/forti_security_policy.json -XPUT "https://localhost:9200/_ilm/policy/forti_security_policy_001" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
+curl --data @src/elasticsearch/ilm_policy/forti_traffic_policy.json -XPUT "https://localhost:9200/_ilm/policy/forti_traffic" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
+curl --data @src/elasticsearch/ilm_policy/forti_security_policy.json -XPUT "https://localhost:9200/_ilm/policy/forti_security" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
 #Palo
-curl --data @src/elasticsearch/ilm_policy/palo_traffic_policy.json -XPUT "https://localhost:9200/_ilm/policy/palo_traffic_policy_001" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
-curl --data @src/elasticsearch/ilm_policy/palo_threat_policy.json -XPUT "https://localhost:9200/_ilm/policy/palo_threat_policy_001" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
-curl --data @src/elasticsearch/ilm_policy/palo_gp_policy.json -XPUT "https://localhost:9200/_ilm/policy/palo_globalprotect_policy_001" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
+curl --data @src/elasticsearch/ilm_policy/palo_traffic_policy.json -XPUT "https://localhost:9200/_ilm/policy/palo_traffic" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
+curl --data @src/elasticsearch/ilm_policy/palo_threat_policy.json -XPUT "https://localhost:9200/_ilm/policy/palo_threat" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
+curl --data @src/elasticsearch/ilm_policy/palo_gp_policy.json -XPUT "https://localhost:9200/_ilm/policy/palo_globalprotect" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
 #Nozomi
-curl --data @src/elasticsearch/ilm_policy/nozomi_sign_policy.json -XPUT "https://localhost:9200/_ilm/policy/nozomi_sign_policy_001" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
-curl --data @src/elasticsearch/ilm_policy/nozomi_incident_policy.json -XPUT "https://localhost:9200/_ilm/policy/nozomi_incident_policy_001" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
-curl --data @src/elasticsearch/ilm_policy/nozomi_vi_policy.json -XPUT "https://localhost:9200/_ilm/policy/nozomi_vi_policy_001" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
-curl --data @src/elasticsearch/ilm_policy/nozomi_audit_policy.json -XPUT "https://localhost:9200/_ilm/policy/nozomi_audit_policy_001" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
-curl --data @src/elasticsearch/ilm_policy/nozomi_health_policy.json -XPUT "https://localhost:9200/_ilm/policy/nozomi_health_policy_001" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
+curl --data @src/elasticsearch/ilm_policy/nozomi_sign_policy.json -XPUT "https://localhost:9200/_ilm/policy/nozomi_sign" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
+curl --data @src/elasticsearch/ilm_policy/nozomi_incident_policy.json -XPUT "https://localhost:9200/_ilm/policy/nozomi_incident" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
+curl --data @src/elasticsearch/ilm_policy/nozomi_vi_policy.json -XPUT "https://localhost:9200/_ilm/policy/nozomi_vi" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
+curl --data @src/elasticsearch/ilm_policy/nozomi_audit_policy.json -XPUT "https://localhost:9200/_ilm/policy/nozomi_audit" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
+curl --data @src/elasticsearch/ilm_policy/nozomi_health_policy.json -XPUT "https://localhost:9200/_ilm/policy/nozomi_health" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:"$ES_PASS" -H "Content-Type: application/json" -H "kbn-xsrf: reporting"
 
 echo "====Template setting Fortigate===="
 curl --data @src/elasticsearch/index_template/forti_traffic_format.json -X PUT "https://localhost:9200/_index_template/forti_traffic_template?pretty" --cacert /etc/elasticsearch/certs/ca/ca.crt -u elastic:$ES_PASS -H 'Content-Type: application/json'
