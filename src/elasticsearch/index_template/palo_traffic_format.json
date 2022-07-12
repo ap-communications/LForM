@@ -1,0 +1,548 @@
+{
+  "template": {
+    "settings": {
+      "index": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "refresh_interval": "1s",
+        "lifecycle.name": "palo_traffic_policy_001",
+        "lifecycle.rollover_alias": "palo_syslog-traffic" 
+      }
+    },
+    "mappings": {
+      "dynamic": true,
+      "numeric_detection": false,
+      "date_detection": true,
+      "dynamic_date_formats": [
+        "strict_date_optional_time",
+        "yyyy/MM/dd HH:mm:ss Z||yyyy/MM/dd Z"
+      ],
+      "_source": {
+        "enabled": true,
+        "includes": [],
+        "excludes": []
+      },
+      "_routing": {
+        "required": false
+      },
+      "dynamic_templates": [
+        {
+          "defaultmapping_notanalyzed": {
+            "match": "*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "action": {
+          "type": "keyword"
+        },
+        "action_source": {
+          "type": "keyword"
+        },
+        "actionflags": {
+          "type": "keyword"
+        },
+        "app": {
+          "type": "keyword"
+        },
+        "attempted_gateways": {
+          "type": "keyword"
+        },
+        "auth_method": {
+          "type": "keyword"
+        },
+        "bytes": {
+          "type": "long"
+        },
+        "bytes_received": {
+          "type": "long"
+        },
+        "bytes_sent": {
+          "type": "long"
+        },
+        "category": {
+          "type": "keyword"
+        },
+        "category_of_app": {
+          "type": "keyword"
+        },
+        "characteristic_of_app": {
+          "type": "keyword"
+        },
+        "client_os": {
+          "type": "keyword"
+        },
+        "client_os_ver": {
+          "type": "keyword"
+        },
+        "client_ver": {
+          "type": "keyword"
+        },
+        "cloud": {
+          "type": "keyword"
+        },
+        "cloud_reportid": {
+          "type": "keyword"
+        },
+        "connect_method": {
+          "type": "keyword"
+        },
+        "container_id": {
+          "type": "keyword"
+        },
+        "container_of_app": {
+          "type": "keyword"
+        },
+        "content_version": {
+          "type": "keyword"
+        },
+        "contenttype": {
+          "type": "keyword"
+        },
+        "destination_vm_uuid": {
+          "type": "keyword"
+        },
+        "device_name": {
+          "type": "keyword"
+        },
+        "direction": {
+          "type": "keyword"
+        },
+        "domain_edl": {
+          "type": "keyword"
+        },
+        "dport": {
+          "type": "keyword"
+        },
+        "dst": {
+          "type": "ip"
+        },
+        "dst_category": {
+          "type": "keyword"
+        },
+        "dst_dag": {
+          "type": "keyword"
+        },
+        "dst_edl": {
+          "type": "keyword"
+        },
+        "dst_host": {
+          "type": "keyword"
+        },
+        "dst_mac": {
+          "type": "keyword"
+        },
+        "dst_model": {
+          "type": "keyword"
+        },
+        "dst_osfamily": {
+          "type": "keyword"
+        },
+        "dst_osversion": {
+          "type": "keyword"
+        },
+        "dst_profile": {
+          "type": "keyword"
+        },
+        "dst_vendor": {
+          "type": "keyword"
+        },
+        "dstloc": {
+          "type": "keyword"
+        },
+        "dstuser": {
+          "type": "keyword"
+        },
+        "dynamic_usergroup_name": {
+          "type": "keyword"
+        },
+        "elapsed": {
+          "type": "integer"
+        },
+        "error": {
+          "type": "keyword"
+        },
+        "error_code": {
+          "type": "keyword"
+        },
+        "eventid": {
+          "type": "keyword"
+        },
+        "filedigest": {
+          "type": "keyword"
+        },
+        "filetype": {
+          "type": "keyword"
+        },
+        "flags": {
+          "type": "keyword"
+        },
+        "from": {
+          "type": "keyword"
+        },
+        "gateway": {
+          "type": "keyword"
+        },
+        "high_res_timestamp": {
+          "type": "date",
+          "format": "strict_date_optional_time"
+        },
+        "hostid": {
+          "type": "keyword"
+        },
+        "hostname": {
+          "type": "keyword"
+        },
+        "http2_connection": {
+          "type": "keyword"
+        },
+        "http_headers": {
+          "type": "keyword"
+        },
+        "http_method": {
+          "type": "keyword"
+        },
+        "inbound_if": {
+          "type": "keyword"
+        },
+        "is_saas_of_app": {
+          "type": "keyword"
+        },
+        "justification": {
+          "type": "keyword"
+        },
+        "link_change_count": {
+          "type": "keyword"
+        },
+        "link_switches": {
+          "type": "keyword"
+        },
+        "location": {
+          "type": "keyword"
+        },
+        "login_duration": {
+          "type": "keyword"
+        },
+        "logset": {
+          "type": "keyword"
+        },
+        "machinename": {
+          "type": "keyword"
+        },
+        "misc_file": {
+          "type": "keyword"
+        },
+        "misc_url": {
+          "type": "keyword"
+        },
+        "misc_virus": {
+          "type": "keyword"
+        },
+        "misc_wildfire": {
+          "type": "keyword"
+        },
+        "monitor_tag_imei": {
+          "type": "keyword"
+        },
+        "natdport": {
+          "type": "keyword"
+        },
+        "natdst": {
+          "type": "ip"
+        },
+        "natsport": {
+          "type": "keyword"
+        },
+        "natsrc": {
+          "type": "ip"
+        },
+        "nssai_sd": {
+          "type": "keyword"
+        },
+        "nssai_sst": {
+          "type": "keyword"
+        },
+        "offloaded": {
+          "type": "keyword"
+        },
+        "opaque": {
+          "type": "keyword"
+        },
+        "outbound_if": {
+          "type": "keyword"
+        },
+        "packets": {
+          "type": "integer"
+        },
+        "parent_session_id": {
+          "type": "keyword"
+        },
+        "parent_start_time": {
+          "type": "keyword"
+        },
+        "partial_hash": {
+          "type": "keyword"
+        },
+        "payload_protocol_id": {
+          "type": "keyword"
+        },
+        "pcap_id": {
+          "type": "keyword"
+        },
+        "pkts_received": {
+          "type": "integer"
+        },
+        "pkts_sent": {
+          "type": "integer"
+        },
+        "pod_name": {
+          "type": "keyword"
+        },
+        "pod_namespace": {
+          "type": "keyword"
+        },
+        "policy_id": {
+          "type": "keyword"
+        },
+        "portal": {
+          "type": "keyword"
+        },
+        "priority": {
+          "type": "keyword"
+        },
+        "private_ip": {
+          "type": "keyword"
+        },
+        "private_ipv6": {
+          "type": "keyword"
+        },
+        "proto": {
+          "type": "keyword"
+        },
+        "public_ip": {
+          "type": "keyword"
+        },
+        "public_ipv6": {
+          "type": "keyword"
+        },
+        "reason": {
+          "type": "keyword"
+        },
+        "receive_time": {
+          "type": "date",
+          "format": "strict_date_optional_time||epoch_second"
+        },
+        "recipient": {
+          "type": "keyword"
+        },
+        "referer": {
+          "type": "keyword"
+        },
+        "repeatcnt": {
+          "type": "integer"
+        },
+        "reportid": {
+          "type": "keyword"
+        },
+        "response_time": {
+          "type": "keyword"
+        },
+        "risk_of_app": {
+          "type": "keyword"
+        },
+        "rule": {
+          "type": "keyword"
+        },
+        "rule_uuid": {
+          "type": "keyword"
+        },
+        "sanctioned_state_of_app": {
+          "type": "keyword"
+        },
+        "sctp_association_id": {
+          "type": "keyword"
+        },
+        "sctp_chunks": {
+          "type": "keyword"
+        },
+        "sctp_chunks_received": {
+          "type": "keyword"
+        },
+        "sctp_chunks_sent": {
+          "type": "keyword"
+        },
+        "sdwan_cluster": {
+          "type": "keyword"
+        },
+        "sdwan_cluster_type": {
+          "type": "keyword"
+        },
+        "sdwan_device_type": {
+          "type": "keyword"
+        },
+        "sdwan_site": {
+          "type": "keyword"
+        },
+        "selection_type": {
+          "type": "keyword"
+        },
+        "sender": {
+          "type": "keyword"
+        },
+        "seqno": {
+          "type": "keyword"
+        },
+        "serial": {
+          "type": "keyword"
+        },
+        "serialnumber": {
+          "type": "keyword"
+        },
+        "session_end_reason": {
+          "type": "keyword"
+        },
+        "session_owner": {
+          "type": "keyword"
+        },
+        "sessionid": {
+          "type": "keyword"
+        },
+        "severity": {
+          "type": "keyword"
+        },
+        "source_vm_uuid": {
+          "type": "keyword"
+        },
+        "sport": {
+          "type": "keyword"
+        },
+        "src": {
+          "type": "ip"
+        },
+        "src_category": {
+          "type": "keyword"
+        },
+        "src_dag": {
+          "type": "keyword"
+        },
+        "src_edl": {
+          "type": "keyword"
+        },
+        "src_host": {
+          "type": "keyword"
+        },
+        "src_mac": {
+          "type": "keyword"
+        },
+        "src_model": {
+          "type": "keyword"
+        },
+        "src_osfamily": {
+          "type": "keyword"
+        },
+        "src_osversion": {
+          "type": "keyword"
+        },
+        "src_profile": {
+          "type": "keyword"
+        },
+        "src_vendor": {
+          "type": "keyword"
+        },
+        "srcloc": {
+          "type": "keyword"
+        },
+        "srcregion": {
+          "type": "keyword"
+        },
+        "srcuser": {
+          "type": "keyword"
+        },
+        "stage": {
+          "type": "keyword"
+        },
+        "start": {
+          "type": "date",
+          "format": "strict_date_optional_time||epoch_second"
+        },
+        "status": {
+          "type": "keyword"
+        },
+        "subcategory_of_app": {
+          "type": "keyword"
+        },
+        "subject": {
+          "type": "keyword"
+        },
+        "subtype_threat": {
+          "type": "keyword"
+        },
+        "subtype_traffic": {
+          "type": "keyword"
+        },
+        "technology_of_app": {
+          "type": "keyword"
+        },
+        "threat_category": {
+          "type": "keyword"
+        },
+        "threatid": {
+          "type": "keyword"
+        },
+        "time_generated": {
+          "type": "date",
+          "format": "strict_date_optional_time||epoch_second"
+        },
+        "to": {
+          "type": "keyword"
+        },
+        "tunnel_id_imsi": {
+          "type": "keyword"
+        },
+        "tunnel_type": {
+          "type": "keyword"
+        },
+        "type": {
+          "type": "keyword"
+        },
+        "url_category": {
+          "type": "keyword"
+        },
+        "url_category_risk": {
+          "type": "keyword"
+        },
+        "user_agent": {
+          "type": "keyword"
+        },
+        "vsys": {
+          "type": "keyword"
+        },
+        "vsys_id": {
+          "type": "keyword"
+        },
+        "vsys_name": {
+          "type": "keyword"
+        },
+        "wildfire_result": {
+          "type": "keyword"
+        },
+        "xff": {
+          "type": "keyword"
+        },
+        "xff_ip": {
+          "type": "ip"
+        }
+      }
+    }
+  },
+  "index_patterns": [
+    "palo_syslog-traffic*"
+  ],
+  "_meta": {
+    "template_version": "2.0.0"
+  }
+}
